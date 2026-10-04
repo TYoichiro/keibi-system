@@ -4,8 +4,8 @@ type ConnectionStatus = 'loading' | 'connected' | 'error';
 
 const statusMessages: Record<ConnectionStatus, string> = {
   loading: '接続を確認しています…',
-  connected: 'サーバーに接続できました。',
-  error: 'サーバーに接続できませんでした。ページを再読み込みしてください。',
+  connected: 'サーバーとデータベースに接続できました。',
+  error: 'サーバーまたはデータベースに接続できませんでした。ページを再読み込みしてください。',
 };
 
 export default function App() {
@@ -24,9 +24,9 @@ export default function App() {
           throw new Error(`Health check failed: ${response.status}`);
         }
 
-        const data: { status?: string } = await response.json();
+        const data: { status?: string; database?: string } = await response.json();
 
-        if (data.status !== 'ok') {
+        if (data.status !== 'ok' || data.database !== 'ok') {
           throw new Error('Unexpected health check response');
         }
 

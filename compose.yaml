@@ -1,4 +1,29 @@
 services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-keibi}
+      POSTGRES_USER: ${POSTGRES_USER:-keibi}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-keibi_app}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./infra/postgres/init-app-user.sh:/docker-entrypoint-initdb.d/10-app-user.sh:ro
+    secrets:
+      - postgres_admin_password
+      - postgres_app_password
+    networks:
+      - database
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 5
+
   backend:
     build:
       context: .
@@ -9,11 +34,31 @@ services:
       NODE_ENV: development
       HOST: 0.0.0.0
       PORT: "3000"
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-keibi}
+      POSTGRES_USER: ${POSTGRES_USER:-keibi}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-keibi_app}
+      POSTGRES_APP_PASSWORD_FILE: /run/secrets/postgres_app_password
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      RATE_LIMIT_POINTS: ${RATE_LIMIT_POINTS:-120}
+      RATE_LIMIT_DURATION: ${RATE_LIMIT_DURATION:-60}
+      MAX_BODY_BYTES: ${MAX_BODY_BYTES:-1048576}
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
-    ports:
-      - "127.0.0.1:${BACKEND_PORT:-3000}:3000"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    secrets:
+      - postgres_app_password
+    networks:
+      - application
+      - database
     volumes:
       - ./apps/backend/src:/app/apps/backend/src:ro
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
@@ -34,7 +79,14 @@ services:
     environment:
       NODE_ENV: development
       API_PROXY_TARGET: http://backend:3000
+      VITE_HOST: 0.0.0.0
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - application
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-5173}:5173"
     volumes:
@@ -54,3 +106,17 @@ services:
       timeout: 3s
       start_period: 10s
       retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  application:
+  database:
+    internal: true
+
+secrets:
+  postgres_admin_password:
+    file: ./.secrets/postgres_admin_password
+  postgres_app_password:
+    file: ./.secrets/postgres_app_password

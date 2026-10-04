@@ -1,4 +1,5 @@
 .git
+.secrets
 **/node_modules
 **/dist
 **/coverage

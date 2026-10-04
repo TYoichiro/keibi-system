@@ -6,13 +6,16 @@
   "workspaces": ["apps/frontend", "apps/backend"],
   "engines": { "node": ">=24 <25", "npm": ">=11" },
   "scripts": {
+    "setup": "node scripts/setup-env.mjs",
     "dev": "docker compose up --build",
     "dev:frontend": "npm run dev --workspace @keibi/frontend",
     "dev:backend": "npm run dev --workspace @keibi/backend",
     "build": "npm run build --workspaces",
     "typecheck": "npm run typecheck --workspaces",
     "lint": "eslint .",
-    "check": "npm run typecheck && npm run lint && npm run build"
+    "test": "npm run test --workspace @keibi/backend",
+    "security:audit": "npm audit --audit-level=moderate",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
