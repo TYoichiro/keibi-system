@@ -1,0 +1,56 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    init: true
+    command: ["npm", "run", "dev", "--workspace", "@keibi/backend"]
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: "3000"
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-3000}:3000"
+    volumes:
+      - ./apps/backend/src:/app/apps/backend/src:ro
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    init: true
+    command: ["npm", "run", "dev", "--workspace", "@keibi/frontend"]
+    environment:
+      NODE_ENV: development
+      API_PROXY_TARGET: http://backend:3000
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./apps/frontend/src:/app/apps/frontend/src:ro
+      - ./apps/frontend/index.html:/app/apps/frontend/index.html:ro
+      - ./apps/frontend/vite.config.ts:/app/apps/frontend/vite.config.ts:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:5173/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 5

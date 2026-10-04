@@ -1,0 +1,10 @@
+.git
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+**/.vite
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log

@@ -1,0 +1,17 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY apps/frontend/package.json ./apps/frontend/package.json
+COPY apps/backend/package.json ./apps/backend/package.json
+RUN npm ci
+
+COPY . .
+RUN chown -R node:node /app
+
+USER node
+
+EXPOSE 5173 3000
+
+CMD ["npm", "run", "dev", "--workspace", "@keibi/backend"]
