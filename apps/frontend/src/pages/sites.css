@@ -1,0 +1,230 @@
+/* Site register and the selected site's basic information. */
+.registry-page-heading { margin-bottom: 25px; }
+.registry-heading-actions { display: flex; align-items: center; gap: 10px; padding-top: 17px; }
+.registry-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.registry-stat { padding: 17px 18px; border: 1px solid var(--border); border-radius: 8px; background: white; }
+.registry-stat > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #6e7e94; font-size: 11px; }
+.registry-stat-icon { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 8px; }
+.registry-stat-blue .registry-stat-icon { color: #7697c2; background: #eff4fb; }
+.registry-stat-teal .registry-stat-icon { color: #43a990; background: #eef8f4; }
+.registry-stat-violet .registry-stat-icon { color: #9d8dbb; background: #f4f0f9; }
+.registry-stat-amber .registry-stat-icon { color: #c5a064; background: #fcf5e9; }
+.registry-stat p { display: flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+.registry-stat strong { color: #3e526b; font-size: 31px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.35; letter-spacing: -.8px; }
+.registry-stat p > span { color: #93a1b3; font-size: 10px; }
+.registry-stat small { margin-left: auto; color: #91a0b1; font-size: 9px; white-space: nowrap; }
+.registry-stat-teal small { color: #77a590; }
+.registry-stat-amber strong { color: #b88d43; }
+.registry-stat-amber small { color: #b19a74; }
+.registry-renewal-banner { display: flex; align-items: center; gap: 12px; margin: 20px 0; padding: 13px 17px; border: 1px solid #e2eaf4; border-radius: 7px; background: #f0f5fc; }
+.registry-renewal-icon { display: grid; flex-shrink: 0; width: 31px; height: 31px; place-items: center; border-radius: 7px; color: #829bc2; background: #e4edf9; }
+.registry-renewal-banner > div { display: flex; align-items: baseline; flex: 1; flex-wrap: wrap; gap: 5px 16px; }
+.registry-renewal-banner strong { color: #6b84a5; font-size: 11px; font-weight: 600; }
+.registry-renewal-banner > div > span { color: #8c9eb7; font-size: 10px; }
+.registry-renewal-banner > button { display: flex; align-items: center; gap: 7px; flex-shrink: 0; padding: 5px 0; border: none; color: #7891b3; background: transparent; font-size: 10px; }
+.registry-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 292px; align-items: start; gap: 20px; }
+.registry-list-panel .panel-heading { padding-right: 18px; padding-left: 18px; }
+.registry-list-scope { color: #9cabbc; font-size: 8px; }
+.registry-status-tabs { width: fit-content; margin: 0 18px 14px; }
+.registry-status-tabs.table-tabs { gap: 4px; }
+.registry-status-tabs button { padding-right: 12px; padding-left: 12px; }
+.registry-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 0 18px 13px; }
+.registry-filters .site-search { flex: 1; min-width: 180px; }
+.registry-type-filter { position: relative; display: flex; align-items: center; height: 34px; border: 1px solid #e7ebf0; border-radius: 5px; background: white; }
+.registry-type-filter select { width: 136px; height: 100%; padding: 0 24px 0 10px; appearance: none; border: none; border-radius: 5px; color: #8191a6; background: transparent; font: inherit; font-size: 10px; cursor: pointer; }
+.registry-type-filter > .icon { position: absolute; right: 7px; color: #9cabbc; pointer-events: none; }
+.registry-renewal-filter { display: flex; align-items: center; gap: 5px; height: 34px; padding: 0 10px; border: 1px solid #e7ebf0; border-radius: 5px; color: #8a9bb0; background: white; font-size: 9px; }
+.registry-renewal-filter.is-selected { border-color: #d9e5f3; color: #7694bd; background: #f0f5fc; }
+.registry-list-hint { display: flex; align-items: center; gap: 5px; padding: 0 19px 13px; color: #9aabbd; font-size: 8px; line-height: 1.7; }
+.registry-table-scroll { position: relative; overflow-x: auto; }
+.registry-table { width: 100%; min-width: 740px; border-collapse: collapse; text-align: left; }
+.registry-table thead th { height: 36px; padding: 0 7px; border-top: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; color: #8d9caf; background: #fafbfd; font-size: 9px; font-weight: 500; white-space: nowrap; }
+.registry-table thead th:first-child { width: 235px; padding-left: 18px; }
+.registry-table thead th:nth-child(2) { width: 75px; }
+.registry-table thead th:nth-child(3) { width: 115px; }
+.registry-table thead th:nth-child(4) { width: 46px; text-align: center; }
+.registry-table thead th:nth-child(5) { width: 121px; }
+.registry-table thead th:nth-child(6) { width: 80px; }
+.registry-table thead th:last-child { width: 27px; }
+.registry-row > th, .registry-row > td { height: 84px; padding: 11px 7px; border-bottom: 1px solid #edf1f5; vertical-align: middle; }
+.registry-row:last-child > th, .registry-row:last-child > td { border-bottom: none; }
+.registry-row > th { padding-left: 18px; font-weight: 400; }
+.registry-row:hover > th, .registry-row:hover > td { background: #fcfdff; }
+.registry-row.is-selected > th, .registry-row.is-selected > td { background: #f7fbfa; }
+.registry-row.is-selected > th { box-shadow: inset 3px 0 #72baab; }
+.registry-site-select { display: flex; align-items: center; gap: 9px; width: 100%; padding: 0; border: none; background: transparent; text-align: left; }
+.registry-site-select:hover { filter: none; }
+.registry-site-select .site-type-icon { width: 31px; height: 34px; }
+.registry-site-select > span:last-child { min-width: 0; }
+.registry-site-id { display: block; margin-bottom: 3px; color: #9fadc0; font-size: 7px; letter-spacing: .3px; }
+.registry-site-select strong { display: block; color: #546981; font-size: 11px; font-weight: 600; line-height: 1.6; }
+.registry-client { display: block; margin-top: 4px; color: #90a0b3; font-size: 8px; line-height: 1.5; }
+.registry-category { display: inline-block; padding: 4px 5px; border: 1px solid; border-radius: 4px; font-size: 8px; line-height: 1.4; white-space: nowrap; }
+.registry-category-traffic { color: #8199b9; background: #f4f7fc; border-color: #e3eaf6; }
+.registry-category-facility { color: #88a197; background: #f4faf7; border-color: #e6efea; }
+.registry-category-event { color: #a092b8; background: #f8f5fc; border-color: #eee7f5; }
+.registry-hours { display: block; color: #7f90a6; font-size: 9px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.registry-shift { display: inline-block; margin-top: 6px; padding: 2px 5px; border-radius: 3px; color: #94a3b6; background: #f0f3f7; font-size: 8px; }
+.registry-shift.is-night { color: #a096b8; background: #f3eff8; }
+.registry-required { color: #95a4b7; text-align: center; white-space: nowrap; font-size: 9px; }
+.registry-required strong { margin-right: 3px; color: #7a8da4; font-size: 14px; font-weight: 500; }
+.registry-contract-start, .registry-contract-end { display: block; color: #8698ae; font-size: 9px; line-height: 1.6; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.registry-contract-end { margin-top: 2px; color: #97a6b8; }
+.registry-renewal-tag { display: inline-block; margin-top: 5px; padding: 2px 5px; border: 1px solid #f0e4ce; border-radius: 3px; color: #bba070; background: #fcf7ed; font-size: 7px; font-weight: 400; }
+.registry-status { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border: 1px solid; border-radius: 4px; white-space: nowrap; font-size: 8px; }
+.registry-status > span { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.registry-status-green { color: #71a18c; background: #f3faf5; border-color: #e1f0e7; }
+.registry-status-blue { color: #819bc3; background: #f2f6fc; border-color: #e3ecf8; }
+.registry-status-amber { color: #bda374; background: #fcf8ef; border-color: #f0e7d6; }
+.registry-status-gray { color: #9ca8b8; background: #f4f6f9; border-color: #e8edf3; }
+.registry-no-results { padding: 40px 20px; color: #93a4b8; text-align: center; }
+.registry-no-results > .icon { display: block; margin: 0 auto 15px; color: #b0bed0; }
+.registry-no-results strong { display: block; font-size: 12px; font-weight: 500; }
+.registry-no-results p { margin-top: 9px; font-size: 10px; }
+.registry-no-results button { margin-top: 20px; }
+.registry-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 10px 18px; border-top: 1px solid var(--border); color: #94a3b6; font-size: 9px; }
+.registry-pagination nav { display: flex; align-items: center; gap: 5px; }
+.registry-pagination button { display: grid; width: 26px; height: 26px; place-items: center; padding: 0; border: 1px solid #e6ecf3; border-radius: 4px; color: #92a3b8; background: white; font-size: 10px; }
+.registry-pagination button.is-current { color: #7595ad; border-color: #dbe8e9; background: #f0f7f5; }
+.registry-pagination button:disabled { color: #c9d2de; background: #fbfcfe; cursor: default; }
+
+/* Site information remains visible alongside the list on desktop. */
+.registry-detail-column { display: grid; min-width: 0; gap: 19px; }
+.registry-detail-panel .panel-heading { height: 56px; padding: 0 16px; border-bottom: 1px solid #edf1f5; }
+.registry-detail-body { padding: 17px 16px 0; }
+.registry-detail-badges { display: flex; align-items: center; justify-content: space-between; }
+.registry-detail-body h3 { margin-top: 12px; color: #50677f; font-size: 14px; font-weight: 600; line-height: 1.7; }
+.registry-detail-client { margin-top: 5px; color: #8f9fb2; font-size: 9px; }
+.registry-address { display: flex; align-items: start; gap: 6px; margin-top: 11px; color: #98a8ba; font-size: 9px; line-height: 1.7; }
+.registry-address .icon { margin-top: 1px; color: #a7b6c8; }
+.registry-contract-card { margin-top: 17px; padding: 12px 10px; border: 1px solid #e8edf3; border-radius: 5px; background: #fafbfd; }
+.registry-contract-card.has-renewal { border-color: #eee5d3; background: #fffcf6; }
+.registry-contract-card > span { display: flex; align-items: center; gap: 6px; color: #9aa7b8; font-size: 9px; }
+.registry-contract-card .registry-renewal-tag { margin: 0 0 0 auto; }
+.registry-contract-card strong { display: flex; justify-content: space-between; gap: 5px; margin-top: 10px; color: #8293aa; font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.registry-contract-card strong > span { color: #b9c4d2; font-weight: 400; }
+.registry-detail-section { margin-top: 19px; padding-bottom: 16px; border-bottom: 1px solid #edf1f5; }
+.registry-detail-section h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; color: #8094ab; font-size: 10px; font-weight: 500; }
+.registry-detail-section dl { display: grid; gap: 12px; margin: 0; }
+.registry-detail-section dl > div { display: grid; grid-template-columns: 61px minmax(0, 1fr); align-items: baseline; gap: 8px; }
+.registry-detail-section dt { color: #a0aebf; font-size: 9px; }
+.registry-detail-section dd { margin: 0; color: #8a9bb0; font-size: 9px; line-height: 1.8; }
+.registry-detail-section dd > .registry-shift { margin-top: 0; margin-left: 5px; }
+.registry-detail-section dd strong { font-size: 13px; font-weight: 500; }
+.registry-condition { display: flex; align-items: start; gap: 6px; margin-top: 13px; padding: 9px; border: 1px solid #e6ede9; border-radius: 4px; color: #91a899; background: #f7fbf9; font-size: 9px; line-height: 1.7; }
+.registry-condition > .icon { margin-top: 1px; }
+.registry-contact-section { margin-top: 16px; padding-bottom: 15px; border-bottom: none; }
+.registry-contact-person { display: flex; align-items: center; gap: 9px; }
+.registry-contact-avatar { display: grid; width: 31px; height: 32px; place-items: center; border-radius: 6px; color: #98abc2; background: #eef3fa; font-size: 12px; }
+.registry-contact-person strong { display: block; color: #8193aa; font-size: 11px; font-weight: 500; }
+.registry-contact-person > div > span { display: block; margin-top: 4px; color: #a7b4c5; font-size: 8px; }
+.registry-phone { display: flex; align-items: center; gap: 6px; margin-top: 11px; color: #94a6bb; font-size: 10px; font-variant-numeric: tabular-nums; }
+.registry-phone small { margin-left: 2px; color: #b6c2d0; font-size: 7px; }
+.registry-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 13px 16px; border-top: 1px solid #edf1f5; background: #fcfdff; }
+.registry-detail-actions .secondary-button { height: 31px; padding: 0 10px; gap: 5px; font-size: 9px; }
+.registry-detail-actions .text-button { gap: 4px; font-size: 9px; }
+.registry-memo-panel .panel-heading { height: 53px; padding: 0 16px; }
+.registry-memo-panel > p { padding: 0 16px 17px; color: #92a3b7; font-size: 10px; line-height: 2; }
+.registry-memo-footer { display: flex; align-items: center; gap: 5px; padding: 11px 16px; border-top: 1px solid #edf1f5; color: #a5b3c4; font-size: 8px; }
+.registry-detail-empty { padding: 38px 15px; text-align: center; color: #abb8c9; }
+.registry-detail-empty h2 { margin-top: 15px; font-weight: 500; }
+.registry-detail-empty p { margin-top: 14px; font-size: 10px; line-height: 1.9; }
+
+@media (min-width: 1550px) {
+  .registry-workspace { grid-template-columns: minmax(0, 1fr) 320px; }
+  .registry-table thead th:first-child { width: 270px; }
+  .registry-site-select strong { font-size: 12px; }
+  .registry-client { font-size: 9px; }
+  .registry-contract-start, .registry-contract-end, .registry-hours { font-size: 10px; }
+  .registry-row > th, .registry-row > td { height: 89px; }
+  .registry-detail-body h3 { font-size: 15px; }
+  .registry-detail-client, .registry-address, .registry-detail-section dd { font-size: 10px; }
+}
+
+@media (max-width: 1350px) and (min-width: 1051px) {
+  .registry-workspace { grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; }
+  .registry-summary { gap: 12px; }
+  .registry-stat { padding: 15px; }
+  .registry-stat small { font-size: 8px; }
+  .registry-table { min-width: 700px; }
+  .registry-table thead th:first-child { width: 220px; }
+  .registry-table thead th:nth-child(3) { width: 110px; }
+  .registry-table thead th:nth-child(5) { width: 111px; }
+  .registry-filters .site-search { width: 100%; flex-basis: 100%; }
+  .registry-type-filter { flex: 1; }
+  .registry-type-filter select { width: 100%; }
+  .registry-detail-body h3 { font-size: 12px; }
+  .registry-detail-section dl > div { grid-template-columns: 52px minmax(0, 1fr); gap: 6px; }
+  .registry-detail-section dd > .registry-shift { margin-left: 2px; }
+}
+
+@media (max-width: 1050px) {
+  .registry-workspace { grid-template-columns: minmax(0, 1fr); }
+  .registry-detail-column { grid-template-columns: 1fr 1fr; align-items: start; }
+  .registry-stat { padding: 13px; }
+  .registry-stat small { display: none; }
+  .registry-stat > div { font-size: 10px; }
+  .registry-stat-icon { width: 28px; height: 28px; }
+  .registry-heading-actions { gap: 7px; padding-top: 0; }
+  .registry-heading-actions > button { padding-right: 10px; padding-left: 10px; font-size: 10px; }
+  .registry-renewal-banner > div > span { width: 100%; font-size: 9px; }
+  .registry-table { min-width: 700px; }
+  .registry-list-scope { font-size: 8px; }
+}
+
+@media (max-width: 760px) {
+  .registry-page-heading { gap: 15px; margin-bottom: 20px; }
+  .registry-heading-actions { justify-content: flex-end; width: 100%; }
+  .registry-heading-actions > button { height: 33px; }
+  .registry-summary { grid-template-columns: 1fr 1fr; gap: 11px; }
+  .registry-stat { padding: 13px 14px; }
+  .registry-stat > div { font-size: 11px; }
+  .registry-stat strong { font-size: 28px; }
+  .registry-stat small { display: block; font-size: 7px; }
+  .registry-renewal-banner { flex-wrap: wrap; align-items: start; gap: 9px; margin: 16px 0; padding: 12px; }
+  .registry-renewal-icon { width: 26px; height: 27px; }
+  .registry-renewal-banner strong { font-size: 10px; line-height: 1.7; }
+  .registry-renewal-banner > div > span { font-size: 9px; line-height: 1.7; }
+  .registry-renewal-banner > button { margin-left: 35px; padding-top: 0; font-size: 9px; }
+  .registry-workspace { gap: 15px; }
+  .registry-list-panel .panel-heading { padding-right: 14px; padding-left: 14px; }
+  .registry-list-scope { font-size: 7px; }
+  .registry-status-tabs { display: flex; width: auto; margin: 0 14px 12px; }
+  .registry-status-tabs.table-tabs { gap: 2px; }
+  .registry-status-tabs button { justify-content: center; flex: 1; gap: 4px; padding-right: 5px; padding-left: 5px; font-size: 9px; }
+  .registry-status-tabs button > span { font-size: 8px; }
+  .registry-filters { gap: 8px; padding: 0 14px 12px; }
+  .registry-filters .site-search { width: 100%; flex-basis: 100%; }
+  .registry-type-filter { flex: 1; }
+  .registry-type-filter select { width: 100%; }
+  .registry-renewal-filter { padding-right: 8px; padding-left: 8px; font-size: 9px; }
+  .registry-list-hint { padding-right: 14px; padding-left: 14px; font-size: 8px; }
+  .registry-table { min-width: 740px; }
+  .registry-pagination { padding: 11px 14px; min-height: 52px; font-size: 8px; }
+  .registry-pagination nav { gap: 4px; }
+  .registry-pagination button { width: 24px; height: 24px; }
+  .registry-detail-column { grid-template-columns: 1fr; gap: 15px; }
+  .registry-detail-body { padding: 16px 17px 0; }
+  .registry-detail-body h3 { font-size: 15px; }
+  .registry-detail-client, .registry-address, .registry-detail-section dd { font-size: 10px; }
+  .registry-detail-section dl > div { grid-template-columns: 76px minmax(0, 1fr); }
+  .registry-detail-section dt, .registry-detail-section h4 { font-size: 10px; }
+  .registry-contract-card strong { justify-content: flex-start; gap: 14px; font-size: 11px; }
+  .registry-condition { font-size: 10px; }
+  .registry-contact-person strong { font-size: 12px; }
+  .registry-contact-person > div > span { font-size: 9px; }
+  .registry-phone { font-size: 11px; }
+  .registry-detail-actions { padding-right: 17px; padding-left: 17px; }
+  .registry-detail-actions .secondary-button { font-size: 10px; }
+  .registry-detail-actions .text-button { font-size: 10px; }
+  .registry-memo-panel > p { font-size: 11px; }
+}
+
+@media (max-width: 420px) {
+  .registry-heading-actions { justify-content: space-between; }
+  .registry-heading-actions > button { flex: 1; }
+  .registry-stat small { display: none; }
+  .registry-list-scope { display: none; }
+  .registry-pagination { gap: 8px; }
+  .registry-pagination nav { gap: 3px; }
+}

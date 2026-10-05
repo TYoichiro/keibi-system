@@ -1,0 +1,254 @@
+/* Shared roster and attendance layout, matching the control-room workspace. */
+.management-page-heading { margin-bottom: 24px; }
+.management-heading-actions { display: flex; flex-shrink: 0; align-items: center; gap: 9px; padding-top: 16px; }
+.management-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.management-stat { min-width: 0; padding: 16px 18px 17px; border: 1px solid var(--border); border-radius: 8px; background: white; box-shadow: 0 2px 3px #26344702; }
+.management-stat > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #728298; font-size: 11px; font-weight: 500; }
+.management-stat-icon { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 7px; color: var(--tone); background: var(--tint); }
+.management-stat p { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.management-stat strong { color: #34465d; font-size: 33px; font-weight: 650; letter-spacing: -1px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.management-stat p > span { color: #8c9bb0; font-size: 10px; }
+.management-stat small { width: 100%; margin-top: 3px; color: #96a4b7; font-size: 9px; }
+.management-stat.tone-amber strong { color: #bd954e; }
+.tone-blue { --tone: #7c99c4; --tint: #f0f5fc; --tone-border: #e0eaf7; }
+.tone-green { --tone: #71a692; --tint: #f0f8f4; --tone-border: #dceee4; }
+.tone-violet { --tone: #a08cbf; --tint: #f6f2fc; --tone-border: #ece5f6; }
+.tone-amber { --tone: #bca06a; --tint: #fcf7ed; --tone-border: #f0e6d2; }
+.tone-gray { --tone: #99a7ba; --tint: #f4f6f9; --tone-border: #e6ebf2; }
+.management-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; border: 1px solid var(--tone-border); border-radius: 4px; color: var(--tone); background: var(--tint); font-size: 8px; font-weight: 400; line-height: 1.4; white-space: nowrap; }
+.management-badge > span { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.management-banner { display: flex; align-items: center; gap: 12px; margin: 20px 0; padding: 13px 16px; border: 1px solid; border-radius: 7px; }
+.banner-amber { color: #b8985c; border-color: #efe4cf; background: #fffbf2; }
+.banner-green { color: #7b9d8e; border-color: #deece5; background: #f6fbf8; }
+.management-banner-icon { display: grid; flex-shrink: 0; width: 31px; height: 31px; place-items: center; border-radius: 50%; background: #f9efda; }
+.banner-green .management-banner-icon { background: #e9f4ee; }
+.management-banner > div { display: flex; flex: 1; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; }
+.management-banner strong { font-size: 11px; font-weight: 600; line-height: 1.7; }
+.management-banner > div > span { color: #ad9f86; font-size: 9px; line-height: 1.7; }
+.management-banner > button { display: flex; flex-shrink: 0; align-items: center; gap: 7px; padding: 5px 0; border: none; color: inherit; background: transparent; font-size: 10px; }
+.management-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 292px; align-items: start; gap: 20px; }
+.personnel-list-panel, .attendance-list-panel { min-width: 0; }
+.management-workspace .panel-heading { padding-right: 18px; padding-left: 18px; }
+.management-list-scope { color: #9cabbc; font-size: 8px; }
+.management-tabs.table-tabs { width: fit-content; max-width: calc(100% - 36px); margin: 0 18px 14px; gap: 4px; overflow-x: auto; }
+.management-tabs.table-tabs button { flex-shrink: 0; padding-right: 11px; padding-left: 11px; white-space: nowrap; }
+.management-filter-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 0 18px 12px; }
+.management-filter-bar .site-search { flex: 1; min-width: 180px; }
+.management-select { position: relative; display: flex; flex-shrink: 0; align-items: center; height: 34px; border: 1px solid #e7ebf0; border-radius: 5px; background: white; }
+.management-select select { width: 135px; height: 100%; padding: 0 25px 0 10px; appearance: none; border: none; border-radius: 5px; color: #7e8fa6; background: transparent; font: inherit; font-size: 10px; cursor: pointer; }
+.management-select select:focus-visible { outline: 3px solid #5a9de8; outline-offset: 3px; }
+.management-select > .icon { position: absolute; right: 8px; color: #9babbf; pointer-events: none; }
+.management-list-note { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 18px 12px; color: #9aabbd; font-size: 8px; }
+.management-list-note > span { display: flex; align-items: center; gap: 5px; line-height: 1.7; }
+.management-inline-filter { display: flex; align-items: center; gap: 4px; flex-shrink: 0; padding: 4px 6px; border: 1px solid #eee7d9; border-radius: 4px; color: #b09b74; background: #fffcf7; font-size: 8px; }
+.management-inline-filter.is-selected { border-color: #e0cc9c; background: #fbf1d9; }
+.management-table-scroll { position: relative; overflow-x: auto; }
+.management-table { width: 100%; border-collapse: collapse; text-align: left; }
+.management-table thead th { height: 36px; padding: 0 7px; border-top: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; color: #8d9caf; background: #fafbfd; font-size: 9px; font-weight: 500; white-space: nowrap; }
+.management-table thead th:first-child { padding-left: 18px; }
+.management-table thead th:last-child { width: 30px; }
+.management-row > th, .management-row > td { height: 80px; padding: 10px 7px; border-bottom: 1px solid #edf1f5; vertical-align: middle; }
+.management-row:last-child > th, .management-row:last-child > td { border-bottom: none; }
+.management-row > th { padding-left: 18px; font-weight: 400; }
+.management-row:hover > th, .management-row:hover > td { background: #fcfdff; }
+.management-row.is-selected > th, .management-row.is-selected > td { background: #f7fbfa; }
+.management-row.is-selected > th { box-shadow: inset 3px 0 #72baab; }
+.management-muted { color: #a7b3c3; font-size: 9px; font-weight: 400; }
+.personnel-table { min-width: 720px; }
+.personnel-table thead th:first-child { width: 160px; }
+.personnel-table thead th:nth-child(2) { width: 65px; }
+.personnel-table thead th:nth-child(3) { width: 114px; }
+.personnel-table thead th:nth-child(4) { width: 215px; }
+.personnel-table thead th:nth-child(5) { width: 70px; }
+.person-select { display: flex; align-items: center; gap: 9px; width: 100%; padding: 0; border: none; color: inherit; background: transparent; text-align: left; }
+.person-select:hover { filter: none; }
+.person-select > span:last-child { min-width: 0; }
+.person-select strong { display: block; color: #526981; font-size: 11px; font-weight: 600; line-height: 1.7; white-space: nowrap; }
+.person-select > span > span { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #9fadc0; font-size: 8px; font-weight: 400; }
+.person-select i, .person-assignment i, .person-profile-heading i, .attendance-site i { display: inline-block; width: 1px; height: 7px; background: #d9e2ec; }
+.person-avatar { display: grid; flex-shrink: 0; width: 32px; height: 34px; place-items: center; border: 1px solid; border-radius: 8px; font-size: 13px; font-weight: 500; }
+.person-color-teal { color: #70a596; border-color: #e0eee7; background: #eef7f3; }
+.person-color-blue { color: #819cc0; border-color: #e1eaf5; background: #f0f5fc; }
+.person-color-violet { color: #9b8cb5; border-color: #ebe5f3; background: #f6f2fb; }
+.person-color-amber { color: #b49f78; border-color: #ede6d7; background: #fbf7ef; }
+.person-color-slate { color: #8f9fb3; border-color: #e6ebf2; background: #f3f6fa; }
+.person-avatar.is-large { width: 44px; height: 46px; border-radius: 10px; font-size: 18px; }
+.employment-label { color: #8192a8; font-size: 9px; white-space: nowrap; }
+.person-qualifications { display: flex; flex-wrap: wrap; gap: 4px; }
+.person-qualification { display: inline-flex; align-items: center; gap: 4px; padding: 4px 5px; border: 1px solid #e4eaf4; border-radius: 4px; color: #8398b7; background: #f7f9fd; font-size: 8px; line-height: 1.4; white-space: nowrap; }
+.person-education-warning { display: block; margin-top: 5px; color: #b39b70; font-size: 7px; }
+.person-assignment strong { display: block; color: #71869f; font-size: 10px; font-weight: 500; line-height: 1.7; }
+.person-assignment strong.is-available { color: #80a390; }
+.person-assignment > span { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; color: #99a8bb; font-size: 8px; font-weight: 400; }
+.person-assignment small { padding: 2px 4px; border-radius: 3px; color: #80a797; background: #eaf4ee; font-size: 7px; }
+.management-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 10px 18px; border-top: 1px solid var(--border); color: #94a3b6; font-size: 9px; }
+.management-pagination nav { display: flex; align-items: center; gap: 5px; }
+.management-pagination button { display: grid; width: 26px; height: 26px; place-items: center; padding: 0; border: 1px solid #e6ecf3; border-radius: 4px; color: #92a3b8; background: white; font-size: 10px; }
+.management-pagination button.is-current { color: #7595ad; border-color: #dbe8e9; background: #f0f7f5; }
+.management-pagination button:disabled { color: #c9d2de; background: #fbfcfe; cursor: default; }
+.management-empty-results { height: 320px; padding: 40px 20px; color: #93a4b8; text-align: center; }
+.management-empty-results > .icon { display: block; margin: 0 auto 15px; color: #b0bed0; }
+.management-empty-results strong { display: block; font-size: 12px; font-weight: 500; }
+.management-empty-results p { margin-top: 9px; font-size: 10px; }
+.management-empty-results button { margin-top: 20px; }
+
+/* The detail card follows the selected officer without opening a dialog. */
+.management-side-column { display: grid; min-width: 0; gap: 19px; }
+.management-side-column > .panel > .panel-heading { min-height: 56px; padding: 0 16px; border-bottom: 1px solid #edf1f5; }
+.management-detail-body { padding: 18px 16px 0; }
+.person-profile-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.person-profile-heading > div { flex: 1; }
+.person-profile-heading h3 { color: #536a82; font-size: 14px; font-weight: 600; line-height: 1.7; }
+.person-profile-heading > div > span { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #93a3b7; font-size: 8px; }
+.person-profile-heading > .management-badge { margin-left: auto; }
+.management-detail-section { margin-top: 20px; padding-top: 17px; border-top: 1px solid #edf1f5; }
+.management-detail-section h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; color: #8b9bb0; font-size: 9px; font-weight: 500; }
+.management-detail-section h4 > .icon { color: #a0afc3; }
+.management-detail-section dl { display: grid; gap: 10px; margin: 0; }
+.management-detail-section dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.management-detail-section dt { flex-shrink: 0; color: #9baabc; font-size: 9px; }
+.management-detail-section dd { margin: 0; color: #7d91aa; font-size: 10px; line-height: 1.7; text-align: right; }
+.person-phone { color: #7c91ab; font-size: 12px; font-variant-numeric: tabular-nums; }
+.person-phone small { margin-left: 8px; padding: 2px 4px; border: 1px solid #e8edf3; border-radius: 3px; color: #a3afbe; font-size: 7px; }
+.person-email { margin-top: 7px; color: #93a3b8; font-size: 9px; overflow-wrap: anywhere; }
+.profile-qualifications { display: flex; flex-wrap: wrap; gap: 5px; }
+.profile-qualifications .person-qualification { padding: 5px 7px; font-size: 9px; }
+.education-card { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 12px; padding: 10px 11px; border: 1px solid #e1eee7; border-radius: 5px; background: #f7fbf9; }
+.education-card > span { color: #95a59d; font-size: 9px; }
+.education-card strong { color: #80a190; font-size: 9px; font-weight: 500; }
+.education-card small { grid-column: 1 / -1; color: #9facb8; font-size: 8px; line-height: 1.6; }
+.education-card.needs-review { border-color: #f0e5d1; background: #fffcf6; }
+.education-card.needs-review strong { color: #b49b6d; }
+.person-site-link { display: flex; align-items: center; gap: 5px; color: #7e96b4; text-decoration: none; font-size: 11px; font-weight: 500; line-height: 1.7; }
+.person-site-link:hover { text-decoration: underline; }
+.person-today-section > p { margin-top: 7px; color: #9aabbd; font-size: 9px; }
+.person-today-section > p > span { margin-left: 8px; padding: 2px 5px; border-radius: 3px; background: #f1f4f8; color: #97a6b8; font-size: 8px; }
+.person-today-section > p.person-unassigned-note { font-size: 10px; line-height: 1.9; }
+.management-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 7px; margin-top: 20px; padding: 14px 16px; border-top: 1px solid #edf1f5; }
+.management-detail-actions .secondary-button { height: 32px; padding: 0 10px; font-size: 9px; }
+.management-detail-actions .text-button { gap: 4px; font-size: 9px; text-decoration: none; }
+.management-note-panel > p { padding: 16px; color: #8e9fb4; font-size: 10px; line-height: 2; }
+.management-detail-empty { display: grid; place-items: center; gap: 15px; min-height: 220px; padding: 25px 18px; color: #acbacb; text-align: center; }
+.management-detail-empty h2 { color: #8a9eb7; font-size: 13px; }
+.management-detail-empty p { font-size: 10px; line-height: 1.8; }
+
+/* Day snapshots and reported times are distinct from planned work hours. */
+.attendance-day-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: -5px 0 20px; }
+.attendance-day-control { display: flex; align-items: center; height: 38px; border: 1px solid #e2e7ef; border-radius: 6px; background: white; }
+.attendance-day-control > button { display: grid; width: 34px; height: 100%; place-items: center; padding: 0; border: none; border-radius: 5px; color: #8b9db4; background: transparent; }
+.attendance-day-control > button:disabled { color: #c7d1df; cursor: default; }
+.attendance-day-control > label { display: flex; align-items: center; gap: 8px; height: 100%; padding: 0 10px; border-right: 1px solid #edf1f5; border-left: 1px solid #edf1f5; color: #8d9fb6; }
+.attendance-day-control select { width: 170px; padding: 0; appearance: none; border: none; color: #6a7c93; background: transparent; font: inherit; font-size: 11px; cursor: pointer; }
+.attendance-day-control select:focus-visible { outline: 3px solid #5a9de8; outline-offset: 3px; }
+.attendance-day-meta { display: flex; align-items: center; gap: 18px; color: #9aabbd; font-size: 9px; }
+.attendance-day-meta > span:first-child > strong { margin: 0 5px 0 8px; color: #7a8fa8; font-size: 15px; font-weight: 500; }
+.attendance-day-meta .attendance-snapshot { display: flex; align-items: center; gap: 6px; color: #93a6b2; font-size: 8px; }
+.attendance-snapshot > span { width: 4px; height: 4px; border-radius: 50%; background: #91b7a7; }
+.attendance-site-select select { width: 145px; text-overflow: ellipsis; }
+.attendance-table { min-width: 780px; }
+.attendance-table thead th:first-child { width: 148px; }
+.attendance-table thead th:nth-child(2) { width: 190px; }
+.attendance-table thead th:nth-child(3) { width: 114px; }
+.attendance-table thead th:nth-child(4), .attendance-table thead th:nth-child(5) { width: 58px; }
+.attendance-table thead th:nth-child(6) { width: 78px; }
+.attendance-table thead th:nth-child(7) { width: 76px; }
+.attendance-site strong { display: block; color: #768ba4; font-size: 10px; font-weight: 500; line-height: 1.7; }
+.attendance-site > span { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: #9cabbc; font-size: 8px; }
+.attendance-scheduled-hours { display: block; color: #8295ac; font-size: 9px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.attendance-scheduled-hours > span { padding: 0 3px; color: #adb9c9; }
+.attendance-scheduled-hours small { margin-right: 2px; font-size: 7px; }
+.attendance-break { display: block; margin-top: 6px; color: #abb6c5; font-size: 8px; }
+.attendance-clock { color: #7f95ae; font-size: 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.attendance-clock.has-review { color: #b49967; }
+.attendance-actual { color: #94a5b9; font-size: 9px; white-space: nowrap; }
+.attendance-review-tag { display: flex; align-items: center; gap: 3px; margin-top: 6px; color: #b5a079; font-size: 7px; }
+.attendance-site-card { margin-top: 18px; padding: 12px; border: 1px solid #e7edf4; border-radius: 5px; background: #fafbfd; }
+.attendance-site-card > span { display: flex; align-items: center; gap: 5px; color: #a1adc0; font-size: 8px; }
+.attendance-site-card > a { display: flex; align-items: center; gap: 5px; margin-top: 8px; color: #7a90ae; text-decoration: none; font-size: 11px; font-weight: 500; line-height: 1.7; }
+.attendance-site-card > a:hover { text-decoration: underline; }
+.attendance-site-card > p { margin-top: 7px; color: #9aaabd; font-size: 8px; }
+.attendance-site-card > p > span { margin-left: 8px; padding: 2px 5px; border-radius: 3px; color: #9aa9bd; background: #edf2f8; }
+.attendance-timeline { display: grid; gap: 17px; margin: 0; padding: 1px 0 3px; list-style: none; }
+.attendance-timeline > li { position: relative; display: flex; align-items: center; gap: 9px; }
+.attendance-timeline > li:first-child::after { position: absolute; top: 26px; bottom: -19px; left: 11px; width: 1px; background: #e4ecf2; content: ''; }
+.attendance-timeline-dot { display: grid; flex-shrink: 0; width: 24px; height: 24px; place-items: center; border: 1px solid #e6ebf2; border-radius: 50%; color: #adbacb; background: #f8fafc; }
+.attendance-timeline .is-reported .attendance-timeline-dot { color: #87ac9c; border-color: #deece5; background: #f1f8f4; }
+.attendance-timeline .is-missing .attendance-timeline-dot { color: #b9a16c; border-color: #efe4cf; background: #fffbf2; }
+.attendance-timeline strong { display: block; color: #7d91ab; font-size: 10px; font-weight: 500; }
+.attendance-timeline li > div > span { display: block; margin-top: 5px; color: #a9b5c5; font-size: 8px; }
+.attendance-timeline time { margin-left: auto; color: #7b93af; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.attendance-duration-card { margin-top: 20px; padding: 12px; border: 1px solid #e8edf4; border-radius: 5px; background: #f8fafc; }
+.attendance-duration-card > span { display: flex; justify-content: space-between; gap: 5px; color: #8c9eb5; font-size: 9px; }
+.attendance-duration-card > span > span { color: #a4b1c3; font-size: 8px; }
+.attendance-duration-card > strong { display: block; margin-top: 9px; color: #8c9eb5; font-size: 20px; font-weight: 500; line-height: 1.5; }
+.attendance-duration-card > small { display: block; margin-top: 5px; color: #a0aec0; font-size: 8px; line-height: 1.8; }
+.attendance-duration-card.is-complete { border-color: #dfeee6; background: #f7fbf9; }
+.attendance-duration-card.is-complete > strong { color: #7eaa95; }
+.attendance-review-note { margin-top: 14px; padding: 11px; border: 1px solid #f0e6d4; border-radius: 5px; background: #fffcf6; }
+.attendance-review-note > strong { display: flex; align-items: center; gap: 5px; color: #b29a6e; font-size: 9px; font-weight: 500; }
+.attendance-review-note > p { margin-top: 8px; color: #ac9f88; font-size: 9px; line-height: 1.9; }
+.attendance-review-list { padding: 0 16px; }
+.attendance-review-list > button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 14px 0; border: none; border-bottom: 1px solid #edf1f5; color: #b0bdcc; background: transparent; text-align: left; }
+.attendance-review-list > button:last-child { border-bottom: none; }
+.attendance-review-list strong { display: block; color: #879bb4; font-size: 10px; font-weight: 500; }
+.attendance-review-list > button > span > span { display: block; margin-top: 6px; color: #b29f7c; font-size: 8px; }
+.attendance-review-list > button.is-selected strong { color: #779c8c; }
+.attendance-no-review { display: flex; align-items: center; gap: 6px; padding: 18px 0; color: #98afa3; font-size: 9px; }
+
+@media (max-width: 1350px) {
+  .management-workspace { grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; }
+  .management-list-scope { display: none; }
+  .management-banner > div { display: block; }
+  .management-banner > div > span { display: block; margin-top: 3px; }
+  .person-profile-heading { gap: 8px; }
+  .person-profile-heading > .management-badge { padding: 4px 5px; }
+}
+@media (max-width: 1150px) {
+  .management-workspace { grid-template-columns: minmax(0, 1fr); }
+  .management-side-column { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .management-summary { gap: 12px; }
+  .management-stat { padding: 14px; }
+  .management-stat > div { font-size: 10px; }
+  .management-page-heading { align-items: start; }
+  .management-heading-actions { padding-top: 22px; }
+}
+@media (max-width: 760px) {
+  .management-page-heading { display: block; margin-bottom: 20px; }
+  .management-heading-actions { justify-content: flex-end; padding-top: 15px; }
+  .management-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .management-stat { padding: 12px 13px; }
+  .management-stat-icon { width: 29px; height: 29px; }
+  .management-stat strong { font-size: 29px; }
+  .management-stat small { font-size: 8px; }
+  .management-banner { flex-wrap: wrap; gap: 10px; margin: 16px 0; padding: 12px; }
+  .management-banner > div { flex: 1 1 calc(100% - 41px); min-width: 0; }
+  .management-banner strong { font-size: 10px; }
+  .management-banner > div > span { font-size: 8px; }
+  .management-banner > button { margin-left: 41px; font-size: 9px; }
+  .management-workspace { gap: 16px; }
+  .management-workspace .panel-heading { padding-right: 14px; padding-left: 14px; }
+  .management-tabs.table-tabs { max-width: calc(100% - 28px); margin-right: 14px; margin-left: 14px; }
+  .management-tabs.table-tabs button { padding-right: 9px; padding-left: 9px; font-size: 9px; }
+  .management-filter-bar { padding-right: 14px; padding-left: 14px; }
+  .management-filter-bar .site-search { flex-basis: 100%; }
+  .management-select { flex: 1; min-width: 0; }
+  .management-select select { width: 100%; min-width: 0; font-size: 9px; }
+  .management-list-note { align-items: start; flex-wrap: wrap; padding-right: 14px; padding-left: 14px; font-size: 7px; }
+  .management-pagination { flex-wrap: wrap; gap: 10px; padding: 12px 14px; font-size: 8px; }
+  .management-pagination button { width: 25px; height: 25px; }
+  .management-pagination nav { gap: 4px; }
+  .management-side-column { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .management-detail-body { padding: 18px; }
+  .management-detail-actions { margin-top: 0; padding: 14px 18px; }
+  .person-profile-heading { gap: 10px; }
+  .management-detail-section dd { font-size: 11px; }
+  .person-site-link { font-size: 12px; }
+  .management-note-panel > p { font-size: 11px; }
+  .attendance-day-bar { gap: 13px; margin-top: -3px; margin-bottom: 17px; }
+  .attendance-day-control { width: 100%; }
+  .attendance-day-control > label { flex: 1; justify-content: center; }
+  .attendance-day-control select { width: 163px; font-size: 10px; }
+  .attendance-day-meta { justify-content: space-between; width: 100%; gap: 10px; }
+  .attendance-table { min-width: 780px; }
+  .attendance-actual-hint { font-size: 7px; }
+}
