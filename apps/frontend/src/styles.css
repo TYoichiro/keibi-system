@@ -65,6 +65,7 @@ h1, h2, h3, p { margin: 0; }
 .header-actions { display: flex; align-items: center; gap: 16px; }
 .mock-label { display: flex; align-items: center; gap: 6px; padding: 5px 9px; border: 1px solid #e6eaf0; border-radius: 4px; color: #7a899d; background: #fafbfd; font-size: 10px; }
 .mock-label > span { width: 5px; height: 5px; border-radius: 50%; background: #a5b2c3; }
+.mock-context { display: flex; align-items: center; gap: 7px; padding: 10px 34px; border-bottom: 1px solid var(--border); color: #78899e; background: #fafbfd; font-size: 10px; line-height: 1.8; }
 .header-divider { height: 22px; width: 1px; background: var(--border); }
 .notification-button { position: relative; }
 .notification-dot { position: absolute; top: 3px; right: 5px; width: 6px; height: 6px; border: 1.5px solid white; border-radius: 50%; background: #e39a72; }
@@ -99,6 +100,20 @@ h1 { color: #263449; font-size: 26px; font-weight: 700; line-height: 1.4; letter
 .metric-amber .metric-value > strong { color: #be8a35; }
 .metric-note { margin-top: 1px; margin-bottom: 17px; color: #8190a4; font-size: 10px; line-height: 1.5; }
 .metric-detail { display: flex; align-items: center; gap: 5px; min-height: 34px; margin: 0 -19px; padding: 0 19px; border-top: 1px solid #f0f2f6; color: #7d8ba0; font-size: 9px; }
+.metric-detail { text-decoration: none; }
+.metric-detail:hover { background: #f8fafc; }
+.notice-item h3 a { color: inherit; text-decoration: none; }
+.notice-item h3 a:hover { text-decoration: underline; }
+.confirmation-panel { margin-bottom: 21px; }
+.confirmation-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; border-top: 1px solid #edf1f5; background: #edf1f5; }
+.confirmation-item { display: flex; align-items: center; gap: 10px; padding: 17px 18px; color: #8a9bb1; background: white; text-decoration: none; }
+.confirmation-item:hover { background: #f8fbfa; }
+.confirmation-icon { display: grid; flex-shrink: 0; width: 32px; height: 32px; place-items: center; border-radius: 7px; color: #6c91a7; background: #f0f5f8; }
+.confirmation-item > span:nth-child(2) { flex: 1; min-width: 0; }
+.confirmation-item strong { display: block; color: #556d88; font-size: 11px; font-weight: 500; line-height: 1.7; }
+.confirmation-item > span > small { display: block; margin-top: 4px; color: #8c9db1; font-size: 9px; line-height: 1.6; }
+.confirmation-item .confirmation-count { color: #ae8644; font-size: 23px; font-weight: 500; white-space: nowrap; }
+.confirmation-item .confirmation-count small { display: inline; margin-left: 3px; font-size: 9px; }
 .metric-teal .metric-detail { color: #469b8c; }
 .metric-amber .metric-detail { color: #b28d4c; }
 .attention-banner { display: flex; align-items: center; gap: 12px; margin: 21px 0; padding: 14px 18px; border: 1px solid #f1e4c7; border-radius: 7px; background: #fffaf0; }
@@ -416,4 +431,20 @@ h2 { color: #354459; white-space: nowrap; font-size: 13px; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {
   button { transition: none; }
+}
+
+@media (min-width: 761px) {
+  .support-note { padding: 12px; }
+  .support-note .support-icon, .support-note p { display: none; }
+  .sidebar-bottom { padding-top: 22px; }
+}
+@media (max-width: 1150px) {
+  .confirmation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .mock-context { align-items: start; padding: 9px 19px; font-size: 9px; }
+  .mock-context .icon { margin-top: 2px; }
+  .confirmation-panel { margin-bottom: 16px; }
+  .confirmation-grid { grid-template-columns: minmax(0, 1fr); }
+  .confirmation-item { padding: 13px 15px; }
 }

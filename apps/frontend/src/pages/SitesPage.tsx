@@ -3,6 +3,7 @@ import Icon from '../components/Icon';
 import { dashboardDate } from '../data/dashboard';
 import { formatSiteDate, managedSites, siteStatuses } from '../data/siteManagement';
 import type { ManagedSite } from '../data/siteManagement';
+import { getClient } from '../data/clients';
 import './sites.css';
 
 type StatusFilter = 'all' | 'active' | 'planned' | 'inactive';
@@ -73,7 +74,7 @@ function SiteDetail({ site }: { site?: ManagedSite }) {
         <div className="registry-detail-body">
           <div className="registry-detail-badges"><span className={`registry-category registry-category-${site.type}`}>{site.category}</span><SiteStatusBadge site={site} /></div>
           <h3>{site.name}</h3>
-          <p className="registry-detail-client">{site.client}</p>
+          <a className="registry-detail-client registry-client-link" href={`/clients?client=${getClient(site.client)?.id}`}>{site.client}<Icon name="arrow-up-right" size={12} /></a>
           <div className="registry-address"><Icon name="map-pin" size={15} /><span>{site.address}</span></div>
 
           <div className={`registry-contract-card${site.renewalReview ? ' has-renewal' : ''}`}>
@@ -97,7 +98,7 @@ function SiteDetail({ site }: { site?: ManagedSite }) {
             <div className="registry-phone"><Icon name="phone" size={13} /><span>{site.phone}</span><small>サンプル</small></div>
           </div>
         </div>
-        <div className="registry-detail-actions"><button type="button" className="secondary-button" title="現場情報の編集は表示サンプルです"><Icon name="edit" size={14} />編集する</button><a className="text-button" href="/assignments">配置・管理を開く<Icon name="arrow-up-right" size={14} /></a></div>
+        <div className="registry-detail-actions"><button type="button" className="secondary-button" title="現場情報の編集は表示サンプルです"><Icon name="edit" size={14} />編集する</button>{site.status === 'active' ? <a className="text-button" href={`/assignments?site=${site.id}`}>本日の配置を見る<Icon name="arrow-up-right" size={14} /></a> : <span className="small-muted">本日の配置対象外</span>}</div>
       </section>
       <section className="panel registry-memo-panel" aria-labelledby="registry-memo-title">
         <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="message" size={18} /></span><h2 id="registry-memo-title">現場メモ</h2></div><span className="small-muted">管制担当</span></div>

@@ -55,7 +55,7 @@ export default function AttendancePage() {
   const initialRecords = attendanceRecords.filter((record) => record.date === latestDay.iso);
   const initialIndex = Math.max(0, initialRecords.findIndex((record) => record.officerId === initialOfficer));
   const [dayIndex, setDayIndex] = useState(attendanceDays.length - 1);
-  const [statusFilter, setStatusFilter] = useState<AttendanceFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<AttendanceFilter>(new URLSearchParams(window.location.search).get('filter') === 'review' ? 'review' : 'all');
   const [siteFilter, setSiteFilter] = useState('all');
   const [shiftFilter, setShiftFilter] = useState('all');
   const [query, setQuery] = useState('');

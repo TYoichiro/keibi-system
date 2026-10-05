@@ -24,6 +24,8 @@
 .registry-renewal-banner > button { display: flex; align-items: center; gap: 7px; flex-shrink: 0; padding: 5px 0; border: none; color: #7891b3; background: transparent; font-size: 10px; }
 .registry-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 292px; align-items: start; gap: 20px; }
 .registry-list-panel .panel-heading { padding-right: 18px; padding-left: 18px; }
+.registry-client-link { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+.registry-client-link:hover { text-decoration: underline; }
 .registry-list-scope { color: #9cabbc; font-size: 8px; }
 .registry-status-tabs { width: fit-content; margin: 0 18px 14px; }
 .registry-status-tabs.table-tabs { gap: 4px; }

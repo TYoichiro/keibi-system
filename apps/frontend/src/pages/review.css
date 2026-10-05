@@ -1,0 +1,74 @@
+/* Additional management mocks use the existing panel and roster components. */
+.review-page .management-heading-actions { padding-top: 0; }
+.review-button-link { text-decoration: none; }
+.review-list-panel { min-width: 0; }
+.review-filter { display: flex; align-items: center; gap: 5px; height: 34px; padding: 0 11px; border: 1px solid #e6eaf0; border-radius: 5px; color: #8091a6; background: white; font-size: 10px; }
+.review-filter.is-selected { border-color: #e4d4af; color: #967337; background: #fff9ee; }
+.review-page .management-table { min-width: 700px; }
+.review-page .management-table thead th:last-child { width: 90px; }
+.review-page .management-table th, .review-page .management-table td { padding-right: 13px; padding-left: 13px; }
+.review-page .management-table th:first-child { padding-left: 18px; }
+.review-record-select { display: grid; gap: 7px; width: 100%; padding: 5px 0; border: none; color: #506782; background: transparent; text-align: left; }
+.review-record-select strong { font-size: 11px; font-weight: 550; line-height: 1.7; }
+.review-record-select small { color: #8696ab; font-size: 9px; font-weight: 400; line-height: 1.7; }
+.review-cell-primary { display: block; color: #667c96; font-size: 10px; }
+.review-cell-secondary { display: block; margin-top: 7px; color: #8999ac; font-size: 9px; }
+.review-count { color: #556e89; font-size: 18px; font-weight: 500; }
+.review-count small { margin-left: 4px; color: #8c9db2; font-size: 9px; }
+.clients-table th:first-child { width: 230px; }
+.review-detail-body h3 { margin: 10px 0; color: #4e6681; font-size: 14px; line-height: 1.8; }
+.review-address { display: flex; align-items: start; gap: 5px; color: #8193a9; font-size: 10px; line-height: 1.8; }
+.review-address .icon { margin-top: 2px; }
+.review-email { margin-top: 12px; color: #8397ae; font-size: 10px; overflow-wrap: anywhere; }
+.review-note { display: flex; align-items: start; gap: 8px; margin: 20px 0; padding: 12px; border-radius: 5px; color: #72869f; background: #f6f8fb; }
+.review-note .icon { margin-top: 3px; }
+.review-note p { font-size: 10px; line-height: 1.9; }
+.review-related-list { padding: 0 16px; }
+.review-related-list a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px 0; border-bottom: 1px solid #edf1f5; color: #7d94ae; text-decoration: none; }
+.review-related-list a:last-child { border-bottom: none; }
+.review-related-list strong { display: block; color: #5e7692; font-size: 11px; font-weight: 500; line-height: 1.7; }
+.review-related-list small { display: block; margin-top: 5px; color: #8a9bb0; font-size: 9px; line-height: 1.7; }
+.review-related-list a:hover strong { text-decoration: underline; }
+.review-period { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: -5px 0 20px; color: #687f99; }
+.review-period > span { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.review-period small { color: #8c9eb5; font-size: 9px; }
+.review-shift-legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 0 18px 14px; }
+.review-shift-legend > span { display: flex; align-items: center; gap: 5px; color: #8294aa; font-size: 9px; }
+.review-shift-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tone); }
+.review-page .shifts-table { min-width: 800px; }
+.review-page .shifts-table thead th:first-child { width: 180px; }
+.review-page .shifts-table th:not(:first-child), .review-page .shifts-table td { padding-right: 8px; padding-left: 8px; text-align: center; }
+.shifts-table thead th span { font-size: 8px; }
+.shifts-table thead th small { display: block; margin-top: 2px; color: #6c9c8d; font-size: 7px; }
+.review-shift-cell { display: inline-block; padding: 5px 7px; border: 1px solid var(--tone-border); border-radius: 4px; color: var(--tone); background: var(--tint); font-size: 9px; white-space: nowrap; }
+.review-today { background: #f5fbf8; }
+.review-request-tag { margin-left: 6px; color: #a1854f; font-size: 8px; }
+.review-day-list { display: grid; gap: 11px; margin: 0; padding: 0 0 6px; list-style: none; }
+.review-day-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #7d91aa; font-size: 10px; }
+.review-request-body { padding: 16px; }
+.review-request-body p { color: #6c819b; font-size: 11px; line-height: 1.9; }
+.review-request-body > span { display: block; margin-top: 12px; color: #92a3b6; font-size: 9px; }
+.review-request-body button { margin-top: 16px; height: 32px; font-size: 10px; }
+.review-kind { display: inline-block; padding: 4px 7px; border: 1px solid #e5ebf3; border-radius: 4px; color: #758ba7; background: #f7f9fc; font-size: 9px; white-space: nowrap; }
+.review-urgent { display: inline-flex; align-items: center; gap: 3px; margin-right: 6px; color: #a8813f; font-size: 9px; }
+.reports-table th:first-child { width: 350px; }
+.review-detail-badges { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.review-report-body { margin-top: 20px; color: #6d839e; font-size: 11px; line-height: 2; }
+.review-next-action { margin-top: 17px; padding: 12px; border: 1px solid #e4edf4; border-radius: 5px; color: #6d839e; background: #f7fafc; }
+.review-next-action strong { font-size: 10px; font-weight: 500; }
+.review-next-action p { margin-top: 7px; font-size: 10px; line-height: 1.9; }
+.review-detail-links { display: grid; gap: 12px; margin-top: 20px; }
+.review-detail-links .text-button { font-size: 10px; line-height: 1.8; }
+.review-history { display: grid; gap: 18px; margin: 0; padding: 17px 20px 17px 32px; color: #80a594; }
+.review-history time { color: #8da0b5; font-size: 9px; }
+.review-history p { margin-top: 5px; color: #6c839e; font-size: 10px; line-height: 1.9; }
+
+@media (max-width: 760px) {
+  .review-page .management-heading-actions { padding-top: 15px; }
+  .review-page .management-table th:first-child { padding-left: 14px; }
+  .review-filter { font-size: 9px; }
+  .review-period { margin-bottom: 16px; }
+  .review-period > span { font-size: 10px; }
+  .review-shift-legend { gap: 12px; padding-right: 14px; padding-left: 14px; }
+  .review-detail-body h3 { font-size: 15px; }
+}

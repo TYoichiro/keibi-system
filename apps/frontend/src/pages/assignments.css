@@ -209,3 +209,12 @@
   .available-officer-info { font-size: 9px; gap: 10px; }
   .placement-board-mode { font-size: 8px; padding-right: 6px; padding-left: 6px; }
 }
+
+.allocation-page .officer-chip { text-decoration: none; }
+.allocation-page .officer-chip:hover { border-color: #9fc5b5; }
+.allocation-officer-link { color: inherit; text-decoration: none; }
+.allocation-officer-link:hover { text-decoration: underline; }
+.allocation-contact-phone { display: block; margin-top: 3px; font-size: 9px; }
+.allocation-site-link { margin-top: 16px; }
+.available-footer > a { display: flex; align-items: center; gap: 5px; color: inherit; text-decoration: none; }
+.available-footer > a:hover { text-decoration: underline; }

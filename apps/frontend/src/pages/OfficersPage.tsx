@@ -39,6 +39,7 @@ function OfficerProfile({ officer }: { officer?: Officer }) {
           <div className="management-detail-section"><h4><Icon name="phone" size={14} />連絡先</h4><p className="person-phone">{officer.phone}<small>サンプル</small></p><p className="person-email">{officer.email}</p></div>
           <div className="management-detail-section"><h4><Icon name="shield" size={14} />資格・教育</h4><div className="profile-qualifications">{officer.qualifications.length ? officer.qualifications.map((qualification) => <span className="person-qualification" key={qualification}><Icon name="shield" size={12} />{qualification}</span>) : <span className="management-muted">資格登録なし</span>}</div><div className={`education-card${officer.educationPending ? ' needs-review' : ''}`}><span>現任教育</span><strong>{officer.status !== 'active' ? '配置対象外' : officer.educationPending ? '予定未登録' : '受講済み'}</strong><small>{officer.educationDate ? `${officer.educationDate.replaceAll('-', '/')} 受講` : officer.educationPending ? '受講予定を確認してください' : '在籍時の記録を確認'}</small></div></div>
           <div className="management-detail-section person-today-section"><h4><Icon name="calendar" size={14} />本日の配置</h4>{officer.assignment ? <><a href={`/sites?site=${officer.assignment.siteId}`} className="person-site-link">{officer.assignment.siteName}<Icon name="arrow-up-right" size={13} /></a><p>{officer.assignment.hours}<span>{officer.assignment.shift}</span></p></> : <p className="person-unassigned-note">{officer.status === 'active' ? '本日は未配置です。勤務可能時間と資格を確認して手配してください。' : '休職・退職した隊員は本日の配置対象に含みません。'}</p>}</div>
+          {officer.status === 'active' && <div className="management-detail-section"><a className="person-site-link" href={`/shifts?officer=${officer.id}`}>シフト・勤務希望を見る<Icon name="arrow-up-right" size={13} /></a></div>}
         </div>
         <div className="management-detail-actions"><button type="button" className="secondary-button" title="隊員情報の編集は表示サンプルです"><Icon name="edit" size={14} />編集する</button><a className="text-button" href={officer.assignment ? `/attendance?officer=${officer.id}` : '/attendance'}>{officer.assignment ? '本日の勤怠を見る' : '勤怠管理を開く'}<Icon name="arrow-up-right" size={14} /></a></div>
       </section>
@@ -53,7 +54,7 @@ export default function OfficersPage() {
   const [rosterFilter, setRosterFilter] = useState<RosterFilter>('all');
   const [qualification, setQualification] = useState('all');
   const [employment, setEmployment] = useState('all');
-  const [educationOnly, setEducationOnly] = useState(false);
+  const [educationOnly, setEducationOnly] = useState(new URLSearchParams(window.location.search).get('filter') === 'education');
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(Math.floor(initialIndex / pageSize));
   const [selectedId, setSelectedId] = useState(officers[initialIndex].id);

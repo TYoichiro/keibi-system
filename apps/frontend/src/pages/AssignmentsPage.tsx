@@ -3,6 +3,7 @@ import Icon from '../components/Icon';
 import { dashboardDate } from '../data/dashboard';
 import { availableOfficers, getSiteDetails, placements } from '../data/assignments';
 import type { Placement } from '../data/assignments';
+import { managedSites } from '../data/siteManagement';
 import './assignments.css';
 
 type StatusFilter = 'all' | 'shortage' | 'complete';
@@ -56,11 +57,11 @@ function PlacementRow({ placement, selected, onSelect }: { placement: Placement;
       <td>
         <div className="placement-officers">
           {placement.officers.map((officer) => (
-            <span className={`officer-chip${officer.leader ? ' is-leader' : ''}`} key={officer.id}>
+            <a href={`/officers?officer=${officer.id}`} className={`officer-chip${officer.leader ? ' is-leader' : ''}`} key={officer.id}>
               <span className="officer-initial">{officer.name[0]}</span>
               <span>{officer.name}</span>
               {officer.leader && <span className="leader-label" title="現場責任者">責</span>}
-            </span>
+            </a>
           ))}
           {Array.from({ length: shortage }, (_, index) => (
             <button className="empty-officer-slot" type="button" key={index} aria-label={`${placement.name}の未配置枠`} title="隊員の配置操作は表示サンプルです">
@@ -98,7 +99,7 @@ function AvailableOfficers() {
           <article className="available-officer" key={officer.id}>
             <div className="available-officer-heading">
               <span className={`available-avatar avatar-${officer.color}`}>{officer.name[0]}</span>
-              <div><strong>{officer.name}</strong><span>{officer.id}<i />{officer.employment}</span></div>
+              <div><strong><a className="allocation-officer-link" href={`/officers?officer=${officer.id}`}>{officer.name}</a></strong><span>{officer.id}<i />{officer.employment}</span></div>
               <button className="available-add-button" type="button" aria-label={`${officer.name}を配置`} title="隊員の配置操作は表示サンプルです"><Icon name="plus" size={15} /></button>
             </div>
             <div className="available-officer-info"><span><Icon name="clock" size={12} />{officer.hours}</span><span><Icon name="map-pin" size={12} />{officer.area}</span></div>
@@ -107,13 +108,15 @@ function AvailableOfficers() {
         ))}
         {visibleOfficers.length === 0 && <p className="available-empty">該当する隊員がいません。</p>}
       </div>
-      <div className="available-footer"><Icon name="help" size={13} /><span>シフトと資格を確認して配置してください</span></div>
+      <div className="available-footer"><Icon name="help" size={13} /><a href="/shifts">シフト・勤務希望を確認<Icon name="arrow-up-right" size={12} /></a></div>
     </section>
   );
 }
 
-function SelectedSite({ placement }: { placement: Placement }) {
+function SelectedSite({ placement }: { placement?: Placement }) {
+  if (!placement) return <section className="panel selected-site-panel"><div className="selected-site-body"><h3>条件に一致する現場がありません</h3><p className="selected-site-client">検索・絞り込みの条件を変更してください。</p></div></section>;
   const details = getSiteDetails(placement);
+  const managedSite = managedSites.find((site) => site.id === placement.id);
   const shortage = placement.required - placement.officers.length;
 
   return (
@@ -127,27 +130,29 @@ function SelectedSite({ placement }: { placement: Placement }) {
         <dl className="selected-site-details">
           <div><dt><Icon name="clock" size={13} />勤務時間</dt><dd>{placement.hours}</dd></div>
           <div><dt><Icon name="map-pin" size={13} />集合場所</dt><dd>{details.meeting}</dd></div>
-          <div><dt><Icon name="users" size={13} />連絡先</dt><dd>{details.contact}</dd></div>
+          <div><dt><Icon name="users" size={13} />連絡先</dt><dd>{managedSite?.contact ?? details.contact}{managedSite && <span className="allocation-contact-phone">{managedSite.phone}</span>}</dd></div>
         </dl>
         {details.condition && <div className="site-condition"><Icon name="shield" size={13} /><span><strong>この現場の配置条件</strong>{details.condition}</span></div>}
         <div className="placement-memo"><span><Icon name="message" size={13} />配置メモ</span><p>{details.note}</p></div>
+        <a className="text-button allocation-site-link" href={`/sites?site=${placement.id}`}>現場情報を開く<Icon name="arrow-up-right" size={13} /></a>
       </div>
     </section>
   );
 }
 
 export default function AssignmentsPage() {
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const params = new URLSearchParams(window.location.search);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(params.get('filter') === 'shortage' ? 'shortage' : 'all');
   const [shiftFilter, setShiftFilter] = useState<ShiftFilter>('all');
   const [query, setQuery] = useState('');
-  const [selectedId, setSelectedId] = useState(placements[0].id);
-  const selectedPlacement = placements.find((placement) => placement.id === selectedId) ?? placements[0];
+  const [selectedId, setSelectedId] = useState(placements.find((placement) => placement.id === params.get('site'))?.id ?? placements[0].id);
   const visiblePlacements = placements.filter((placement) => {
     const shortage = placement.officers.length < placement.required;
     return (statusFilter === 'all' || (statusFilter === 'shortage' ? shortage : !shortage))
       && (shiftFilter === 'all' || placement.shift === shiftFilter)
       && `${placement.name} ${placement.client} ${placement.officers.map((officer) => officer.name).join(' ')}`.replaceAll(' ', '').includes(query.trim().replaceAll(' ', ''));
   });
+  const selectedPlacement = visiblePlacements.find((placement) => placement.id === selectedId) ?? visiblePlacements[0];
 
   return (
     <main className="dashboard allocation-page">
@@ -162,7 +167,7 @@ export default function AssignmentsPage() {
       <div className="allocation-date-bar">
         <div className="allocation-date-navigation">
           <span className="allocation-date-icon"><Icon name="calendar" size={19} /></span>
-          <time dateTime={dashboardDate.iso}>{dashboardDate.label}</time><span className="date-today">今日</span>
+          <time dateTime={dashboardDate.iso}>{dashboardDate.label}</time><span className="date-today">基準日</span>
         </div>
         <span className="allocation-date-note"><Icon name="building" size={13} />東京セキュリティ<span>/</span>本社</span>
       </div>
@@ -197,7 +202,7 @@ export default function AssignmentsPage() {
             <table className="placement-table">
               <thead><tr><th scope="col">現場 / 勤務時間</th><th scope="col">必要</th><th scope="col">配置隊員</th><th scope="col">配置状況</th></tr></thead>
               <tbody>
-                {visiblePlacements.map((placement) => <PlacementRow key={placement.id} placement={placement} selected={selectedId === placement.id} onSelect={() => setSelectedId(placement.id)} />)}
+                {visiblePlacements.map((placement) => <PlacementRow key={placement.id} placement={placement} selected={selectedPlacement?.id === placement.id} onSelect={() => setSelectedId(placement.id)} />)}
                 {visiblePlacements.length === 0 && <tr><td colSpan={4} className="empty-results">条件に一致する現場がありません。</td></tr>}
               </tbody>
             </table>

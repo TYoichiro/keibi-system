@@ -7,6 +7,14 @@ import SitesPage from './pages/SitesPage';
 import OfficersPage from './pages/OfficersPage';
 import AttendancePage from './pages/AttendancePage';
 import SettingsPage from './pages/SettingsPage';
+import ClientsPage from './pages/ClientsPage';
+import ShiftsPage from './pages/ShiftsPage';
+import ReportsPage from './pages/ReportsPage';
+import { attendanceRecords } from './data/attendance';
+import { clients } from './data/clients';
+import { officers } from './data/personnel';
+import { shiftPlans } from './data/shiftPlanning';
+import { reports } from './data/reports';
 import type { ComponentType } from 'react';
 
 const mockPages: Record<string, { title: string; component: ComponentType } | undefined> = {
@@ -15,14 +23,20 @@ const mockPages: Record<string, { title: string; component: ComponentType } | un
   '/officers': { title: '隊員管理', component: OfficersPage },
   '/attendance': { title: '勤怠管理', component: AttendancePage },
   '/settings': { title: '設定', component: SettingsPage },
+  '/clients': { title: '取引先管理', component: ClientsPage },
+  '/shifts': { title: 'シフト・勤務希望', component: ShiftsPage },
+  '/reports': { title: '日報・申し送り', component: ReportsPage },
 };
 
 const navigation: { icon: IconName; label: string; href?: string }[] = [
   { icon: 'dashboard', label: 'ダッシュボード', href: '/' },
   { icon: 'calendar', label: '配置・管理', href: '/assignments' },
   { icon: 'building', label: '現場管理', href: '/sites' },
+  { icon: 'building', label: '取引先管理', href: '/clients' },
   { icon: 'users', label: '隊員管理', href: '/officers' },
+  { icon: 'calendar', label: 'シフト・勤務希望', href: '/shifts' },
   { icon: 'clock', label: '勤怠管理', href: '/attendance' },
+  { icon: 'message', label: '日報・申し送り', href: '/reports' },
 ];
 
 const required = sites.reduce((total, site) => total + site.required, 0);
@@ -85,7 +99,7 @@ function Header({ title }: { title: string }) {
       <div className="header-actions">
         <span className="mock-label"><span />プレビューモック</span><span className="header-divider" />
         <button type="button" className="icon-button help-button" aria-label="ヘルプ"><Icon name="help" size={20} /></button>
-        <button type="button" className="icon-button notification-button" aria-label="お知らせ 2件"><Icon name="bell" size={20} /><span className="notification-dot" /></button>
+        <a href="/reports?filter=open" className="icon-button notification-button" aria-label="未対応の報告・連絡を確認"><Icon name="bell" size={20} /><span className="notification-dot" /></a>
         <span className="avatar avatar-light" aria-label="田中 太郎">田</span>
       </div>
     </header>
@@ -93,11 +107,11 @@ function Header({ title }: { title: string }) {
 }
 
 function Overview() {
-  const metrics: { label: string; icon: IconName; color: string; value: number; denominator?: number; unit: string; note: string; detail: string; detailIcon: IconName }[] = [
-    { label: '本日の稼働現場', icon: 'building', color: 'blue', value: sites.length, unit: '件', note: '交通誘導・施設・イベント', detail: 'すべての現場を確認', detailIcon: 'arrow-right' },
-    { label: '配置済み隊員', icon: 'users', color: 'teal', value: assigned, denominator: required, unit: '名', note: `必要人数 ${required}名`, detail: `配置率 ${Math.round(assigned / required * 100)}%`, detailIcon: 'check-circle' },
-    { label: '上番済み隊員', icon: 'clock', color: 'violet', value: working, denominator: assigned, unit: '名', note: '上番前 2名・下番済み 1名', detail: '本日の勤怠を確認', detailIcon: 'arrow-right' },
-    { label: '未配置の隊員枠', icon: 'user-plus', color: 'amber', value: required - assigned, unit: '名', note: `${unassignedSites.length}現場で配置が必要です`, detail: '優先して確認してください', detailIcon: 'alert' },
+  const metrics: { label: string; icon: IconName; color: string; value: number; denominator?: number; unit: string; note: string; detail: string; detailIcon: IconName; href: string }[] = [
+    { label: '本日の稼働現場', icon: 'building', color: 'blue', value: sites.length, unit: '件', note: '交通誘導・施設・イベント', detail: 'すべての現場を確認', detailIcon: 'arrow-right', href: '/sites' },
+    { label: '配置済み隊員', icon: 'users', color: 'teal', value: assigned, denominator: required, unit: '名', note: `必要人数 ${required}名`, detail: `配置率 ${Math.round(assigned / required * 100)}%`, detailIcon: 'check-circle', href: '/assignments' },
+    { label: '勤務中の隊員', icon: 'clock', color: 'violet', value: working, denominator: assigned, unit: '名', note: '上番前 2名・下番済み 1名', detail: '本日の勤怠を確認', detailIcon: 'arrow-right', href: '/attendance' },
+    { label: '未配置の隊員枠', icon: 'user-plus', color: 'amber', value: required - assigned, unit: '名', note: `${unassignedSites.length}現場で配置が必要です`, detail: '不足の現場を確認', detailIcon: 'alert', href: '/assignments?filter=shortage' },
   ];
   return (
     <section className="overview-grid" aria-label="本日の業務サマリー">
@@ -106,7 +120,7 @@ function Overview() {
           <div className="metric-heading"><span>{metric.label}</span><span className="metric-icon"><Icon name={metric.icon} size={19} /></span></div>
           <div className="metric-value"><strong>{metric.value}</strong>{metric.denominator && <span className="metric-denominator">/ {metric.denominator}</span>}<span className="metric-unit">{metric.unit}</span></div>
           <p className="metric-note">{metric.note}</p>
-          <div className="metric-detail"><Icon name={metric.detailIcon} size={14} /><span>{metric.detail}</span></div>
+          <a href={metric.href} className="metric-detail"><Icon name={metric.detailIcon} size={14} /><span>{metric.detail}</span></a>
         </article>
       ))}
     </section>
@@ -144,7 +158,7 @@ function SiteAssignments() {
                   <td><span className="work-time">{site.hours}</span><span className="shift-type">{site.shift}</span></td>
                   <td><div className={`assignment-count${needsAssignment ? ' has-shortage' : ''}`}><strong>{site.assigned}</strong><span>/ {site.required}名</span>{needsAssignment && <span className="shortage-label">−{site.required - site.assigned}</span>}</div><div className={`assignment-progress${needsAssignment ? ' has-shortage' : ''}`}><span style={{ width: `${site.assigned / site.required * 100}%` }} /></div></td>
                   <td><span className={`status-badge status-${needsAssignment ? 'warning' : 'active'}`}><span />{needsAssignment ? '未配置あり' : '配置完了'}</span></td>
-                  <td><button className="icon-button row-action" type="button" aria-label={`${site.name}の詳細`}><Icon name="chevron-right" size={16} /></button></td>
+                  <td><a className="icon-button row-action" href={`/sites?site=${site.id}`} aria-label={`${site.name}の詳細`}><Icon name="chevron-right" size={16} /></a></td>
                 </tr>
               );
             })}
@@ -160,14 +174,14 @@ function SiteAssignments() {
 function Attendance() {
   return (
     <section className="panel attendance-panel" aria-labelledby="attendance-title">
-      <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="activity" size={19} /></span><h2 id="attendance-title">隊員の稼働状況</h2></div><span className="small-muted">本日</span></div>
+      <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="activity" size={19} /></span><h2 id="attendance-title">隊員の稼働状況</h2></div><a href="/attendance" className="text-button">勤怠を見る<Icon name="arrow-up-right" size={13} /></a></div>
       <div className="attendance-body">
-        <div className="attendance-chart" role="img" aria-label="配置済み32名のうち上番済み29名、上番前2名、下番済み1名">
+        <div className="attendance-chart" role="img" aria-label="配置済み32名のうち勤務中29名、上番前2名、下番済み1名">
           <svg viewBox="0 0 160 160" aria-hidden="true"><circle className="donut-track" cx="80" cy="80" r="65" /><circle className="donut-working" cx="80" cy="80" r="65" pathLength="100" strokeDasharray="90.625 9.375" /><circle className="donut-waiting" cx="80" cy="80" r="65" pathLength="100" strokeDasharray="6.25 93.75" strokeDashoffset="-90.625" /></svg>
-          <div className="donut-center"><span>上番済み</span><strong>{working}<small>名</small></strong><span className="donut-rate">{Math.round(working / assigned * 100)}<small>%</small></span></div>
+          <div className="donut-center"><span>勤務中</span><strong>{working}<small>名</small></strong><span className="donut-rate">{Math.round(working / assigned * 100)}<small>%</small></span></div>
         </div>
         <div className="attendance-legend">
-          <div><span className="legend-label"><i className="legend-dot dot-teal" />上番済み</span><strong>{working}<small>名</small></strong></div>
+          <div><span className="legend-label"><i className="legend-dot dot-teal" />勤務中</span><strong>{working}<small>名</small></strong></div>
           <div><span className="legend-label"><i className="legend-dot dot-amber" />上番前</span><strong>2<small>名</small></strong></div>
           <div><span className="legend-label"><i className="legend-dot dot-gray" />下番済み</span><strong>1<small>名</small></strong></div>
         </div>
@@ -180,12 +194,12 @@ function Attendance() {
 function Notices() {
   return (
     <section className="panel notices-panel" aria-labelledby="notices-title">
-      <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="message" size={19} /></span><h2 id="notices-title">連絡事項</h2><span className="unread-count">2</span></div><button type="button" className="icon-button" aria-label="連絡事項をすべて表示"><Icon name="arrow-up-right" size={17} /></button></div>
+      <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="message" size={19} /></span><h2 id="notices-title">連絡事項</h2><span className="unread-count">2</span></div><a href="/reports" className="icon-button" aria-label="日報・申し送りをすべて表示"><Icon name="arrow-up-right" size={17} /></a></div>
       <div className="notice-list">
         {notices.map((notice) => (
           <article className="notice-item" key={notice.id}>
             <span className={`notice-indicator${notice.unread ? ' is-unread' : ''}`} />
-            <div><div className="notice-meta"><span className={`notice-category category-${notice.categoryColor}`}>{notice.category}</span><time>{notice.time}</time></div><h3>{notice.title}</h3><p>{notice.description}</p></div>
+            <div><div className="notice-meta"><span className={`notice-category category-${notice.categoryColor}`}>{notice.category}</span><time>{notice.time}</time></div><h3><a href={`/reports?report=${notice.id}`}>{notice.title}</a></h3><p>{notice.description}</p></div>
           </article>
         ))}
       </div>
@@ -200,7 +214,7 @@ function WeeklyOutlook() {
       <div className="weekly-grid">
         {weeklyAssignments.map((day, index) => (
           <div className={`week-day${index === 0 ? ' is-today' : ''}`} key={day.date}>
-            <div className="week-day-heading"><span className={day.weekday === '日' ? 'is-sunday' : day.weekday === '土' ? 'is-saturday' : ''}>{day.date}<small>（{day.weekday}）</small></span>{index === 0 && <span className="today-label">今日</span>}</div>
+            <div className="week-day-heading"><span className={day.weekday === '日' ? 'is-sunday' : day.weekday === '土' ? 'is-saturday' : ''}>{day.date}<small>（{day.weekday}）</small></span>{index === 0 && <span className="today-label">基準日</span>}</div>
             <div className="week-count"><strong>{day.assigned}</strong><span>/ {day.required}<small>名</small></span>{day.required === day.assigned && <Icon name="check-circle" size={15} />}</div>
             <div className="week-progress"><span style={{ width: `${day.assigned / day.required * 100}%` }} /></div>
             <span className={`week-caption${day.required > day.assigned ? ' needs-attention' : ''}`}>{day.required > day.assigned ? `あと${day.required - day.assigned}名` : '配置完了'}</span>
@@ -209,6 +223,18 @@ function WeeklyOutlook() {
       </div>
     </section>
   );
+}
+
+function ConfirmationTasks() {
+  const tasks: { title: string; count: number; unit: string; note: string; icon: IconName; href: string }[] = [
+    { title: '勤怠の確認', count: attendanceRecords.filter((record) => record.date === dashboardDate.iso && record.reviewNote).length, unit: '件', note: '上番時刻・休憩の変更', icon: 'clock', href: '/attendance?filter=review' },
+    { title: '勤務希望の申請', count: shiftPlans.filter((plan) => plan.requestPending).length, unit: '件', note: '翌日以降の配置に反映', icon: 'calendar', href: '/shifts?filter=requests' },
+    { title: '日報・申し送り', count: reports.filter((report) => report.status !== 'done').length, unit: '件', note: '未対応・確認中の報告', icon: 'message', href: '/reports' },
+    { title: '契約書類の確認', count: clients.filter((client) => client.documentPending).length, unit: '社', note: '取引先と更新条件を確認', icon: 'building', href: '/clients?filter=pending' },
+    { title: '教育予定の未登録', count: officers.filter((officer) => officer.status === 'active' && officer.educationPending).length, unit: '名', note: '受講予定を確認', icon: 'shield', href: '/officers?filter=education' },
+    { title: '勤務希望の未提出', count: shiftPlans.filter((plan) => plan.days.slice(1).includes('pending')).length, unit: '名', note: '翌日以降の予定を確認', icon: 'users', href: '/shifts?filter=pending' },
+  ];
+  return <section className="panel confirmation-panel" aria-labelledby="confirmation-title"><div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="check-circle" size={19} /></span><h2 id="confirmation-title">管制の確認事項</h2></div><span className="small-muted">対応の入口</span></div><div className="confirmation-grid">{tasks.map((task) => <a href={task.href} className="confirmation-item" key={task.title}><span className="confirmation-icon"><Icon name={task.icon} size={18} /></span><span><strong>{task.title}</strong><small>{task.note}</small></span><span className="confirmation-count">{task.count}<small>{task.unit}</small></span><Icon name="chevron-right" size={14} /></a>)}</div></section>;
 }
 
 export default function App() {
@@ -226,10 +252,11 @@ export default function App() {
       <Sidebar activePath={currentPage ? path : '/'} />
       <div className="main-layout">
         <Header title={title} />
+        <div className="mock-context" role="note"><Icon name="help" size={13} /><span>画面確認用のモックです。登録・保存・通知・出力は行いません。基準日時：2026/10/4 09:30</span></div>
         {Page ? <Page /> : <main className="dashboard">
           <div className="page-heading">
             <div><div className="page-eyebrow"><span className="live-dot" />DAILY OVERVIEW</div><h1>ダッシュボード</h1><p>おはようございます、田中さん。本日の管制状況を確認しましょう。</p></div>
-            <div className="page-actions"><div className="date-selector"><Icon name="calendar" size={17} /><time dateTime={dashboardDate.iso}>{dashboardDate.label}</time><span className="date-today">今日</span></div><button type="button" className="primary-button"><Icon name="plus" size={17} />現場を追加</button></div>
+            <div className="page-actions"><div className="date-selector"><Icon name="calendar" size={17} /><time dateTime={dashboardDate.iso}>{dashboardDate.label}</time><span className="date-today">基準日</span></div><button type="button" className="primary-button"><Icon name="plus" size={17} />現場を追加</button></div>
           </div>
           <Overview />
           <div className="attention-banner" role="note">
@@ -237,6 +264,7 @@ export default function App() {
             <div><strong>本日、{required - assigned}名の配置が必要です</strong><span>渋谷駅前・新宿西口・世田谷区の現場で未配置があります。</span></div>
             <button type="button" className="attention-button" onClick={() => document.getElementById('assignments-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>配置状況を確認<Icon name="arrow-right" size={16} /></button>
           </div>
+          <ConfirmationTasks />
           <div className="operations-grid"><SiteAssignments /><div className="right-column"><Attendance /><Notices /></div></div>
           <WeeklyOutlook />
           <footer className="dashboard-footer"><span>毎日の管制業務を、もっとスムーズに。</span><span>KEIBI<span className="footer-dot">·</span>画面確認用のサンプルデータを表示しています</span></footer>
