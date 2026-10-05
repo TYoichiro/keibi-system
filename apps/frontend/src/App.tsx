@@ -10,6 +10,11 @@ import SettingsPage from './pages/SettingsPage';
 import ClientsPage from './pages/ClientsPage';
 import ShiftsPage from './pages/ShiftsPage';
 import ReportsPage from './pages/ReportsPage';
+import GuardLayout from './components/GuardLayout';
+import GuardHomePage from './pages/guard/GuardHomePage';
+import { GuardAttendancePage, GuardSchedulePage, GuardSitePage } from './pages/guard/GuardDutyPages';
+import { GuardIncidentPage, GuardReportEditorPage, GuardReportsPage, GuardRequestsPage, GuardShiftsPage } from './pages/guard/GuardSubmissionPages';
+import { GuardContactPage, GuardEducationPage, GuardLoginPage, GuardNoticesPage, GuardProfilePage } from './pages/guard/GuardPersonalPages';
 import { attendanceRecords } from './data/attendance';
 import { clients } from './data/clients';
 import { officers } from './data/personnel';
@@ -26,6 +31,20 @@ const mockPages: Record<string, { title: string; component: ComponentType } | un
   '/clients': { title: '取引先管理', component: ClientsPage },
   '/shifts': { title: 'シフト・勤務希望', component: ShiftsPage },
   '/reports': { title: '日報・申し送り', component: ReportsPage },
+  '/guard': { title: '警備員ホーム', component: GuardHomePage },
+  '/guard/login': { title: '警備員ログイン', component: GuardLoginPage },
+  '/guard/schedule': { title: '勤務予定', component: GuardSchedulePage },
+  '/guard/site': { title: '現場情報', component: GuardSitePage },
+  '/guard/attendance': { title: '出退勤・勤務実績', component: GuardAttendancePage },
+  '/guard/shifts': { title: '勤務希望', component: GuardShiftsPage },
+  '/guard/requests': { title: '各種申請', component: GuardRequestsPage },
+  '/guard/reports': { title: '日報・申し送り', component: GuardReportsPage },
+  '/guard/reports/new': { title: '日報・申し送りの入力', component: GuardReportEditorPage },
+  '/guard/incident': { title: '事故・トラブル報告', component: GuardIncidentPage },
+  '/guard/notices': { title: 'お知らせ', component: GuardNoticesPage },
+  '/guard/education': { title: '教育・資格', component: GuardEducationPage },
+  '/guard/contact': { title: '連絡先・ヘルプ', component: GuardContactPage },
+  '/guard/profile': { title: 'マイページ', component: GuardProfilePage },
 };
 
 const navigation: { icon: IconName; label: string; href?: string }[] = [
@@ -97,6 +116,7 @@ function Header({ title }: { title: string }) {
     <header className="topbar">
       <div className="breadcrumb"><Icon name="home" size={16} /><span className="breadcrumb-divider">/</span><span>{title}</span></div>
       <div className="header-actions">
+        <a href="/guard" className="portal-preview-link"><Icon name="shield" size={16} /><span>警備員画面</span></a>
         <span className="mock-label"><span />プレビューモック</span><span className="header-divider" />
         <button type="button" className="icon-button help-button" aria-label="ヘルプ"><Icon name="help" size={20} /></button>
         <a href="/reports?filter=open" className="icon-button notification-button" aria-label="未対応の報告・連絡を確認"><Icon name="bell" size={20} /><span className="notification-dot" /></a>
@@ -239,13 +259,16 @@ function ConfirmationTasks() {
 
 export default function App() {
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const isGuard = path === '/guard' || path.startsWith('/guard/');
   const currentPage = mockPages[path];
   const Page = currentPage?.component;
-  const title = currentPage?.title ?? 'ダッシュボード';
+  const title = currentPage?.title ?? (isGuard ? '警備員ホーム' : 'ダッシュボード');
 
   useEffect(() => {
-    document.title = `${title} | KEIBI クラウド管制`;
-  }, [title]);
+    document.title = `${title} | KEIBI ${isGuard ? '警備員ポータル' : 'クラウド管制'}`;
+  }, [title, isGuard]);
+
+  if (isGuard) return <GuardLayout path={path} title={title}>{Page ? <Page /> : <GuardHomePage />}</GuardLayout>;
 
   return (
     <div className="app-layout">

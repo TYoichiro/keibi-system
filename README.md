@@ -2,7 +2,7 @@
 
 警備会社向けのクラウド型管制業務支援システムを開発しています。
 会社ごとに利用できるマルチテナントWebアプリを目指し、必要最低限の機能から段階的に実装します。
-現在は見た目を確認する段階で、ダッシュボード・配置・現場・取引先・隊員・シフト・勤怠・日報・設定の9画面のモックを作成済みです。
+現在は見た目を確認する段階で、管理者・管制向けの9画面と、現場へ行く警備員向けの14画面のモックを作成済みです。
 
 ReactのSPAとHonoのAPIを、npm workspacesで1つのリポジトリにまとめています。
 フロントエンドはReact + Vite + TypeScript、バックエンドはHono + Node.js + TypeScriptです。
@@ -15,8 +15,8 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 
 | 区分 | 状況 |
 | --- | --- |
-| 画面 | 主要9画面のモックを作成。取引先管理、シフト・勤務希望、日報・申し送りを追加。設定は4カテゴリ |
-| 画面操作 | 検索、絞り込み、ページ送り、詳細切り替え、設定値のプレビューなどを確認可能 |
+| 画面 | 管理者・管制向け9画面（設定は4カテゴリ）と、警備員ポータル14画面 |
+| 画面操作 | 検索、絞り込み、ページ送り、詳細切り替え、勤務希望・日報・申請・設定などの入力プレビューを確認可能 |
 | 表示確認 | PC・スマートフォンで確認済み。画面サンプルを`docs/mockups/`に保存 |
 | データ | TypeScript内の架空のサンプル。主な基準日は2026年10月4日で、現在日付には連動しない |
 | API・DB | HonoとPostgreSQLの接続基盤、および接続確認用の`GET /api/health`を実装 |
@@ -24,6 +24,7 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 
 会社・拠点の表示や設定画面の権限表はモックです。現時点でマルチテナント対応や権限制御が完成しているわけではありません。
 各画面の具体的な操作範囲は、下の「画面のモック」に記載しています。
+管理画面ヘッダーの「警備員画面」から警備員ポータルへ、警備員画面の「管理者モック」から管理画面へ移動できます。この切り替えは表示確認用で、認証・権限の切り替えではありません。
 
 ## AI開発・引き継ぎ資料
 
@@ -36,7 +37,7 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 次の作業では、まず本READMEと`AGENTS.md`、`docs/DEVELOPMENT.md`を参照してください。
 画面や機能を追加・変更した際は、動作する部分と表示のみの部分が分かるように、これらの資料も更新します。
 
-## 画面のモック
+## 管理者・管制向けの画面のモック
 
 ### ダッシュボード
 
@@ -171,7 +172,43 @@ PCではサイドバー下部、スマートフォンでは上部メニューの
 | 通知設定 | [画面](docs/mockups/settings-notifications-desktop.png) | [画面](docs/mockups/settings-notifications-mobile.png) |
 | 利用者・権限 | [画面](docs/mockups/settings-members-desktop.png) | [画面](docs/mockups/settings-members-mobile.png) |
 
-### 画面を起動する
+## 警備員向けの画面のモック
+
+http://localhost:5173/guard で警備員ポータルを開けます。
+会社の警備員本人が、勤務前の予定確認から現場での出退勤・報告まで使うことを想定しています。
+スマートフォンでは下部の「ホーム・勤務予定・出退勤・日報・マイページ」と右上のメニュー、PCでは専用サイドバーから全機能に移動できます。
+
+サンプル利用者は東京セキュリティ本社の田中 和也さん（`G004`）です。
+担当現場は新宿西口 道路舗装工事（`S002`）。氏名・現場・配置隊員・勤務時間・勤怠・本人の報告・資格・教育記録は、管理画面と同じサンプルを参照します。
+基準日時は2026年10月4日09:30のままです。翌日以降の配置は未確定として表示し、勤務希望と区別します。
+
+| 画面 | URL | 主な表示・確認操作 | PC | スマートフォン |
+| --- | --- | --- | --- | --- |
+| ログイン | `/guard/login` | 会社コード・メール・パスワードの表示例、サンプル画面への移動 | [画像](docs/mockups/guard-login-desktop.png) | [画像](docs/mockups/guard-login-mobile.png) |
+| ホーム | `/guard` | 本日の勤務・出退勤・連絡・確認事項・持ち物チェック | [画像](docs/mockups/guard-desktop.png) | [画像](docs/mockups/guard-mobile.png) |
+| 勤務予定 | `/guard/schedule` | 日付選択、本人の勤務・配置待ち、現場情報への移動 | [画像](docs/mockups/guard-schedule-desktop.png) | [画像](docs/mockups/guard-schedule-mobile.png) |
+| 現場情報 | `/guard/site` | 集合場所・アクセス模式図・指示・配置隊員・連絡先の確認 | [画像](docs/mockups/guard-site-desktop.png) | [画像](docs/mockups/guard-site-mobile.png) |
+| 出退勤・勤務実績 | `/guard/attendance` | 本日の打刻表示、休憩入力、10/3・4の勤務記録の切り替え | [画像](docs/mockups/guard-attendance-desktop.png) | [画像](docs/mockups/guard-attendance-mobile.png) |
+| 勤務希望 | `/guard/shifts` | 10/4〜10/10の勤務可・休み希望・未提出、希望時間・補足の入力 | [画像](docs/mockups/guard-shifts-desktop.png) | [画像](docs/mockups/guard-shifts-mobile.png) |
+| 各種申請 | `/guard/requests` | 休暇・勤務時間変更・打刻修正・交通費や経費のフォーム、申請履歴 | [画像](docs/mockups/guard-requests-desktop.png) | [画像](docs/mockups/guard-requests-mobile.png) |
+| 日報・申し送り | `/guard/reports` | 本人の報告の絞り込み、管制の確認履歴 | [画像](docs/mockups/guard-reports-desktop.png) | [画像](docs/mockups/guard-reports-mobile.png) |
+| 日報・申し送りの入力 | `/guard/reports/new` | 業務内容・異常の有無・申し送りの入力と内容プレビュー | [画像](docs/mockups/guard-report-editor-desktop.png) | [画像](docs/mockups/guard-report-editor-mobile.png) |
+| 事故・トラブル報告 | `/guard/incident` | 発生日時・場所・負傷や物損・対応状況の入力、本人の報告履歴 | [画像](docs/mockups/guard-incident-desktop.png) | [画像](docs/mockups/guard-incident-mobile.png) |
+| お知らせ | `/guard/notices` | 本人向けの現場連絡・勤務連絡・社内共有、未読絞り込み・確認済みプレビュー | [画像](docs/mockups/guard-notices-desktop.png) | [画像](docs/mockups/guard-notices-mobile.png) |
+| 教育・資格 | `/guard/education` | 本人の資格・受講記録、研修予定・資料名の表示例 | [画像](docs/mockups/guard-education-desktop.png) | [画像](docs/mockups/guard-education-mobile.png) |
+| 連絡先・ヘルプ | `/guard/contact` | 管制・現場担当者の連絡先、よくある質問の開閉 | [画像](docs/mockups/guard-contact-desktop.png) | [画像](docs/mockups/guard-contact-mobile.png) |
+| マイページ | `/guard/profile` | 本人の所属・連絡先・通知設定の入力プレビュー | [画像](docs/mockups/guard-profile-desktop.png) | [画像](docs/mockups/guard-profile-mobile.png) |
+
+`/guard/requests?kind=correction`で打刻修正のフォーム、`/guard/reports?report=R004`で本人の報告、`/guard/notices?notice=N003`で社内の教育案内を直接開けます。
+申請履歴・本人向け連絡の一部・研修予定・資料名は独立した架空の表示例で、管理画面に登録されたデータではありません。
+
+入力・チェック・確認状態は画面内だけのプレビューで、移動・再読み込みで初期値に戻ります。
+提出・保存・下番報告・発信などのモックボタンは「送信・保存・発信は行っていません」と表示するだけです。
+ファイル選択はファイル名の確認のみで、読込・アップロード・保管は行いません。アクセス図は模式図で、実際の地図・経路案内は未実装です。
+ログイン・パスワード再設定・打刻・申請・日報送信・通知配信・資料の閲覧やダウンロードは実装していません。
+本人向けの表示範囲は固定サンプルの抽出です。管理画面へのアクセス防止や会社・利用者の認可は、本実装時にAPI側で設計・実装します。
+
+## 画面を起動する
 
 画面だけを確認する場合は、Node.js環境で次のコマンドを実行してください。APIとDBの起動は不要です。
 
