@@ -2,6 +2,75 @@
 
 更新日: 2026年10月8日（日本時間）
 
+初回要件 F01〜F09 を実装し、画面の登録・保存・確定をHono APIとPostgreSQLへ接続した。今回の依頼に基づく推奨方式、URL・操作範囲、Google/SMTP設定、運営者CLIは [実装・運用手順](IMPLEMENTATION.md) を参照する。
+
+## 現在の構成
+
+| 場所 | 役割 |
+| --- | --- |
+| `apps/frontend/src/App.tsx` | 実機能と `/preview` の振り分け |
+| `apps/frontend/src/live/OperationalApp.tsx` | 認証状態・許可役割・実画面ナビゲーション |
+| `apps/frontend/src/live/api.ts`, `UI.tsx`, `history.tsx` | CSRF、更新キー、通信失敗・再送結果確認、共通フォーム・監査履歴 |
+| `apps/frontend/src/live/auth.tsx`, `settings.tsx` | Google・招待・全端末失効、会社・利用者・資格管理 |
+| `apps/frontend/src/live/masters.tsx`, `assignments.tsx`, `guard.tsx` | 隊員・取引先・現場、勤務版と配置、本人公開情報 |
+| `apps/frontend/src/live/live.css`, `dates.ts` | 実機能の共通スタイル・スマートフォン対応・JST日時 |
+| `apps/frontend/src/PreviewApp.tsx`, `src/pages/`, `src/data/` | 従来モック。表示専用・架空サンプルは `/preview` のみ |
+| `apps/backend/src/app.ts`, `config.ts`, `index.ts` | 安全対策を維持したAPI配線、設定・起動 |
+| `apps/backend/src/auth/` | Google検証、招待、セッション、利用者・拠点、テナントトランザクション、SMTP、運営者CLI |
+| `apps/backend/src/domain/` | マスタと勤務API、入力・権限・更新競合・監査・勤務公開条件 |
+| `apps/backend/migrations/001_auth.sql`, `002_domain.sql` | 正規化テーブル、会社境界、RLS、認証関数、公開履歴と重複勤務のDB制約 |
+| `scripts/database.mjs` | 管理者権限でマイグレーション、チェックサム、制限付きAPI権限の適用 |
+| `scripts/test.mjs` | 独立した使い捨てDBとテスト実行、終了後の片付け |
+| `apps/backend/test/` | API・DB・Google署名・認証・認可の常設テストと架空データ |
+| `tests/e2e/` | 実APIを使うPlaywright、通信喪失・競合、PC・スマートフォン検証 |
+| `compose.yaml`, `compose.auth.yaml` | DB→migrate→API→UIの起動、任意のGoogle/SMTP秘密マウント |
+
+API応答の形式は `{ data: ... }` と定型エラー。保存は `expectedVersion` と `Idempotency-Key` を使う。公開済み版を改訂案で上書きせず、確定トランザクションで切り替える。本人に見せる項目は専用DTOで限定する。現在の権限・在籍・セッションをトランザクション内でも再確認する。
+
+## データと開発上の注意
+
+会社 → 拠点 → 隊員・現場、会社共通取引先 → 利用拠点・現場、勤務枠 → 不変の公開版・編集可能な下書き → 配置・資格条件、という関係。内部利用者 → Google識別子・所属役割・隊員対応 → アプリセッションを別管理する。メールの一致だけで所属を作らない。
+
+現行テストは固定の2026年10月4日を画面基準日として使用する。通常環境の期限・開始終了判定はサーバーの実時刻で行う。旧モックの固定G004と実利用者の識別子を混ぜない。会社や拠点IDは画面の選択だけでは認可されない。
+
+マイグレーションは適用済みのSQLを変更せず、新しい連番ファイルで追加する。ランナーは適用済みチェックサムの変更を拒否する。API用DBユーザーにDDL・認証秘密テーブルへの直接アクセス・監査の改変権限を与えない。
+
+## 未実装・接続後の確認
+
+勤怠、勤務希望、日報、通知既読・自動送信、教育詳細、給与請求、帳票出力は次期対象。旧画面を `/preview` に分離し、実機能のメニューに未保存の操作を混ぜていない。
+
+実Google OAuthと外部SMTPの設定・往復・配送到達は未検証。管理者に署名済み `amr: mfa` が返るGoogle側設定が必要で、欠落時は許可しない。認証テストでは合成署名トークン、OAuth交換とメールの代替実装を使用する。本番HTTPS配信、分散レート制限、バックアップ復元、負荷、監視、保存・削除期間、導入会社の試験運用手順は別途確認が必要。
+
+## 今回の検証
+
+2026年10月8日、Windows / PowerShellで以下を実行した。
+
+| 検証 | 結果 |
+| --- | --- |
+| `npm.cmd run check` | 成功。フロント/バック/テストコードの型チェック、全体Lint、両アプリのビルドを含む |
+| API・DB常設テスト | 56件成功、失敗・スキップ0。認証25、DB境界6、業務15、既存基盤10 |
+| Playwright常設テスト | 15件成功。保存・再読込、人数不足拒否、確定・改訂・担当解除・取消、本人・閲覧者・他社境界、ログアウト、通信喪失・競合・履歴、招待リンクのUI契約、PC/スマートフォン |
+| `npm.cmd run security:audit` | 成功、検出脆弱性0件 |
+| `docker compose config --quiet` | 成功 |
+| `docker compose up --build -d --wait` | 成功。既存DBを保持し、マイグレーション完了後にAPI・UIがhealthy |
+| 起動したComposeへHTTP確認 | `/`・`/api/health`・`/preview/attendance` が200、未認証 `/api/me` が401 |
+| ドキュメントのローカルリンク・`git diff --check` | 成功 |
+
+常設API・DBテストとPlaywrightは `npm.cmd run check` から再実行できる。独立したPostgreSQLへ架空2社のデータを作り、実利用のDBをテストに使っていない。ブラウザの業務テストは実API/DB、招待リンクの画面契約だけはAPI応答の代替を使用する。招待の発行・受諾・期限は別の実DB認証テストで確認した。実Google往復・実SMTP配送を成功したとは扱わない。
+
+PCは1440×1000、スマートフォンは390×844でページ全体の横はみ出しを検査し、主要実機能19枚を `docs/mockups/live-*.png` に更新した。代表画像の目視も実施。画像はテストDBの実画面であり、実顧客のデータを含まない。ブラウザ環境はPlaywrightのChromiumで、実機端末・全ブラウザ互換性・Google/SMTP・負荷・バックアップ復元・本番HTTPSの保証とは区別する。
+
+## モック段階の記録
+
+以下は実機能へ接続する前の履歴であり、「保存・認証は未実装」などの記述は当時の状況を示す。旧URLは現在 `/preview` を先頭に付けて開く。古い検証を今回の実機能の検証として扱わない。
+
+<details>
+<summary>モック段階の画面・データ・検証履歴を開く</summary>
+
+# 開発状況・実装ガイド
+
+更新日: 2026年10月8日（日本時間）
+
 この資料は、次に開発する人・AIが現在の実装を把握するための引き継ぎです。
 起動手順と各画面の説明は[README](../README.md)、作業方針は[AGENTS.md](../AGENTS.md)、API・DBの対策は[SECURITY.md](../SECURITY.md)を参照してください。
 今後の対策・優先度・完了条件と公開前の検証例は[セキュリティチェックリスト](SECURITY_CHECKLIST.md)にまとめています。対策一覧の追加であり、実装範囲は変わっていません。
@@ -465,3 +534,5 @@ git diff --check
 
 永続化を追加する際は、画面の会社表示だけに依存せず、認証した利用者の会社・役割・対象データをAPI側で確認する。
 変更した機能の保存・送信範囲と、まだモックの部分をREADMEと本資料に反映する。
+
+</details>

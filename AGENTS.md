@@ -8,6 +8,7 @@
 2. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): 現在の実装、ソースの配置、データの関係、未決事項。
 3. [SECURITY.md](SECURITY.md): API・DB・認証・権限に関わる作業で参照。
 4. [Googleログイン設計](docs/requirements/GOOGLE_AUTH_DESIGN.md): 認証・利用者管理を変更する際の確定方針と実装条件。
+5. [実装・運用手順](docs/IMPLEMENTATION.md): 現在採用した方式、Google/SMTP設定、マイグレーション・初期登録・テスト。
 
 `git status --short`で既存の変更を確認し、依頼と無関係な変更を上書き・破棄しないでください。
 
@@ -26,18 +27,18 @@
 
 ## 現在の実装の境界
 
-- 管理者・管制向け9画面と警備員向け14画面に加え、認証5ルート・登録編集8ルートのモックがある。初回と次期の参考画面を区別している。URLと画面の詳細は`docs/DEVELOPMENT.md`を参照する。
-- 警備員ポータルは`/guard`から開く。固定サンプル利用者は田中 和也（`G004`）で、画面の切り替えは認証・権限制御ではない。
-- フロントエンドは`src/data/`の架空のサンプルを使用し、業務APIとは連携していない。
-- 検索・絞り込み・詳細選択などはReactの画面内状態で動作する。設定の入力値も保存されない。
-- 実際のAPIは`GET /api/health`のみ。業務テーブル、業務API、ログイン、テナント分離、利用者ごとの権限制御は未実装。
-- 会社・拠点表示、資格・教育記録、権限表、勤怠集計例はモックであり、実際の業務ルールの確定を意味しない。
+- 初回要件F01〜F09の認証・会社利用者・隊員・取引先・現場・勤務配置・本人予定・履歴を実装。通常画面は`src/live/`からAPI・DBへ接続する。
+- 警備員ポータル`/guard`は認証した本人の公開予定だけを返す。固定利用者やURLの切り替えを認可の根拠にしない。
+- 従来36ルートのモックは`/preview`以下に残す。固定G004・`src/data/`のサンプルは表示見本だけで使用する。
+- 勤怠・勤務希望・日報・教育詳細・自動通知・給与請求・帳票は次期対象。API・保存を持つ初回機能と混ぜない。
+- Google/SMTPの実接続には設定が必要。未設定時の架空利用者ログインやMFA迂回を追加しない。
+- 今回の推奨方式採用は`docs/IMPLEMENTATION.md`に記録。草案の未決事項をユーザーの確認済み回答に書き換えない。
 
 ## フロントエンドを変更する際の基準
 
 - React + TypeScriptの既存構成を使い、関連する画面・データ・CSSを必要な範囲で編集する。
-- ページ登録と管理者向け共通ナビゲーションは`apps/frontend/src/App.tsx`にある。警備員向けレイアウト・ナビゲーションは`src/components/GuardLayout.tsx`。現在は`window.location.pathname`と通常のリンクで切り替える構成。
-- 共通スタイルは`apps/frontend/src/styles.css`、画面別スタイルは`src/pages/`に置く。CSSクラスは画面・機能ごとの接頭辞を使う。
+- `App.tsx`で実機能と遅延読込の`PreviewApp.tsx`を分ける。実機能のナビゲーションは`src/live/OperationalApp.tsx`、警備員画面は`src/live/guard.tsx`。通常のリンクと`window.location.pathname`で切り替える。
+- 共通スタイルは`apps/frontend/src/styles.css`、実機能は`src/live/live.css`、旧モック別スタイルは`src/pages/`。実機能は`live-`等の機能接頭辞を使い、共通モバイルCSSの位置指定も確認する。
 - `main.tsx`では共通CSSを`App`より先に読み込む。この順序と既存画面への影響を確認する。
 - アイコンは`src/components/Icon.tsx`のSVGを使う。隊員・勤怠・設定の共通部品は`ManagementUI.tsx`にある。
 - ダッシュボード・配置・現場・取引先・隊員・シフト・勤怠・日報・警備員ポータルで、共通の現場ID・隊員ID・氏名・人数の整合性を保つ。
@@ -69,7 +70,8 @@ npm.cmd run check
 ```
 
 依存関係を変更した場合は`npm.cmd run security:audit`も確認する。
-フロントエンドの永続的な自動テスト環境はまだない。見た目の変更は対象画面・関連画面をブラウザで確認し、必要に応じてPlaywrightなどで操作を検証する。
+常設のAPI・DBテストとPlaywrightがある。`npm.cmd run check`は使い捨てDBの準備・テスト・ビルド・E2Eまで実行する。Dockerと `npx.cmd playwright install chromium --no-shell` が必要。既存DBにテストデータを投入しない。
+見た目の変更は対象画面・関連画面をPC/スマートフォンで確認する。E2Eの結果と画像の目視を区別して記録する。
 ドキュメントだけの変更では、リンク先・ファイルパス・記載した事実と`git diff --check`を確認する。
 
 ## 作業完了時の記録

@@ -6,6 +6,10 @@ import { csrf } from 'hono/csrf';
 import { HTTPException } from 'hono/http-exception';
 import { secureHeaders } from 'hono/secure-headers';
 import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible';
+import type { Pool } from 'pg';
+import { createAuthRouter, type AuthOptions } from './auth/router.js';
+import { AuthError } from './auth/types.js';
+import { createDomainRouter } from './domain/router.js';
 
 type Options = {
   checkDatabase: () => Promise<unknown>;
@@ -16,6 +20,8 @@ type Options = {
   rateLimitDuration?: number;
   clientAddress?: (context: Context) => string;
   log?: (entry: Record<string, unknown>) => void;
+  pool?: Pool;
+  auth?: Omit<AuthOptions, 'pool' | 'allowedOrigins' | 'production'>;
 };
 
 export function createApp(options: Options) {
@@ -33,7 +39,8 @@ export function createApp(options: Options) {
     c.header('Cache-Control', 'no-store');
     const started = Date.now();
     await next();
-    log({ requestId, method: c.req.method, path: c.req.path, status: c.res.status, durationMs: Date.now() - started });
+    const path = c.req.path.startsWith('/api/auth/invitations/') ? '/api/auth/invitations/:token' : c.req.path;
+    log({ requestId, method: c.req.method, path, status: c.res.status, durationMs: Date.now() - started });
   });
 
   app.use(secureHeaders({
@@ -62,6 +69,8 @@ export function createApp(options: Options) {
   }));
 
   app.use('/api/*', async (c, next) => {
+    // OAuth's fixed GET callback is protected by browser-bound one-time state, nonce and PKCE.
+    if (c.req.method === 'GET' && c.req.path === '/api/auth/google/callback') return next();
     const origin = c.req.header('Origin');
     const unsafe = !['GET', 'HEAD', 'OPTIONS'].includes(c.req.method);
     if (c.req.header('Sec-Fetch-Site') === 'cross-site' ||
@@ -83,8 +92,21 @@ export function createApp(options: Options) {
     }
   });
 
+  if (options.pool) {
+    const auth = createAuthRouter({ pool: options.pool, allowedOrigins: options.allowedOrigins,
+      appOrigin: options.auth?.appOrigin ?? options.allowedOrigins[0], production: options.production, ...options.auth });
+    app.route('/', auth.router);
+    app.route('/', createDomainRouter({ pool: options.pool, authenticate: auth.authenticate, now: options.auth?.now }));
+  }
+
   app.notFound((c) => c.json({ message: 'Not Found' }, 404));
   app.onError((error, c) => {
+    if (error instanceof AuthError) {
+      return c.json({ error: error.code, requestId: c.get('requestId'), fieldIssues: [], retryable: false }, error.status);
+    }
+    if ('code' in error && ['23505','23503','23514'].includes(String(error.code))) {
+      return c.json({ error: 'STATE_CONFLICT', requestId: c.get('requestId'), fieldIssues: [], retryable: false }, 409);
+    }
     if (error instanceof HTTPException && error.status < 500) {
       return c.json({ error: 'REQUEST_REJECTED', requestId: c.get('requestId') }, error.status);
     }

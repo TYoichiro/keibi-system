@@ -12,7 +12,7 @@ const authScreens: Record<string, { title: string; description: string }> = {
 };
 
 export default function AuthMockPage() {
-  const path = window.location.pathname.replace(/\/+$/, '');
+  const path = window.location.pathname.replace(/^\/preview/, '').replace(/\/+$/, '');
   const screen = authScreens[path] ?? authScreens['/login'];
   const activationMember = settingsMembers.find((member) => member.officerId === 'G004')!;
   const securityMember = new URLSearchParams(window.location.search).get('view') === 'guard'

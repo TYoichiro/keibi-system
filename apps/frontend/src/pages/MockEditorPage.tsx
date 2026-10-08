@@ -138,7 +138,7 @@ function AssignmentEditor({ isNew, slot, mode }: { isNew: boolean; slot: MockDut
 }
 
 export default function MockEditorPage() {
-  const kind = window.location.pathname.split('/')[1] as EditorKind;
+  const kind = window.location.pathname.replace(/^\/preview/, '').split('/')[1] as EditorKind;
   const isNew = window.location.pathname.endsWith('/new');
   const params = new URLSearchParams(window.location.search);
   const mode = params.get('mode');

@@ -3,9 +3,22 @@ import { Server } from 'node:http';
 import { createApp } from './app.js';
 import { parseConfig } from './config.js';
 import { createPool } from './db.js';
+import { readFileSync } from 'node:fs';
+import { resolve, isAbsolute } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createGoogleProvider } from './auth/google.js';
+import { createInvitationMailer } from './auth/mail.js';
 
 const config = parseConfig(process.env);
 const pool = createPool(config);
+const root = fileURLToPath(new URL('../../../', import.meta.url));
+const secret = (path: string) => {
+  let value: string;
+  try { value = readFileSync(isAbsolute(path) ? path : resolve(root, path), 'utf8').trim(); }
+  catch { throw new Error('Required authentication or mail secret file is unavailable.'); }
+  if (!value) throw new Error('Required authentication or mail secret file is empty.');
+  return value;
+};
 const app = createApp({
   checkDatabase: () => pool.query('SELECT 1'),
   allowedOrigins: config.ALLOWED_ORIGINS,
@@ -13,6 +26,15 @@ const app = createApp({
   maxBodyBytes: config.MAX_BODY_BYTES,
   rateLimitPoints: config.RATE_LIMIT_POINTS,
   rateLimitDuration: config.RATE_LIMIT_DURATION,
+  pool,
+  auth: {
+    appOrigin: config.APP_ORIGIN,
+    google: config.GOOGLE_CLIENT_ID ? createGoogleProvider({ clientId: config.GOOGLE_CLIENT_ID,
+      clientSecret: secret(config.GOOGLE_CLIENT_SECRET_FILE), redirectUri: config.GOOGLE_REDIRECT_URI }) : undefined,
+    mailer: config.SMTP_HOST ? createInvitationMailer({ host: config.SMTP_HOST, port: config.SMTP_PORT,
+      secure: config.SMTP_SECURE, from: config.SMTP_FROM, user: config.SMTP_USER || undefined,
+      password: config.SMTP_USER ? secret(config.SMTP_PASSWORD_FILE) : undefined }) : undefined,
+  },
 });
 
 const server = serve(

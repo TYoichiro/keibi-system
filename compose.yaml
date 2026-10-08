@@ -24,6 +24,34 @@ services:
       start_period: 10s
       retries: 5
 
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    init: true
+    command: ["node", "scripts/database.mjs"]
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-keibi}
+      POSTGRES_USER: ${POSTGRES_USER:-keibi}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-keibi_app}
+      POSTGRES_ADMIN_PASSWORD_FILE: /run/secrets/postgres_admin_password
+    secrets:
+      - postgres_admin_password
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - database
+    volumes:
+      - ./apps/backend/migrations:/app/apps/backend/migrations:ro
+      - ./scripts/database.mjs:/app/scripts/database.mjs:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
   backend:
     build:
       context: .
@@ -44,6 +72,14 @@ services:
       RATE_LIMIT_POINTS: ${RATE_LIMIT_POINTS:-120}
       RATE_LIMIT_DURATION: ${RATE_LIMIT_DURATION:-60}
       MAX_BODY_BYTES: ${MAX_BODY_BYTES:-1048576}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:5173/api/auth/google/callback}
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:5173}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_FROM: ${SMTP_FROM:-}
       CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
     cap_drop:
       - ALL
@@ -59,6 +95,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test:
         - CMD
