@@ -218,3 +218,53 @@
 .allocation-site-link { margin-top: 16px; }
 .available-footer > a { display: flex; align-items: center; gap: 5px; color: inherit; text-decoration: none; }
 .available-footer > a:hover { text-decoration: underline; }
+
+/* Duty-slot and publication previews. These do not perform business updates. */
+.allocation-page a.primary-button, .allocation-page a.secondary-button, .allocation-page a.empty-officer-slot { text-decoration: none; }
+.allocation-mock-note { display: flex; align-items: start; gap: 8px; margin-bottom: 14px; padding: 11px 13px; border: 1px solid #dee7ed; border-radius: 6px; color: #7b90a4; background: #f1f6f9; font-size: 10px; line-height: 1.8; }
+.allocation-mock-note > .icon { flex-shrink: 0; margin-top: 2px; }
+.allocation-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 17px 0 20px; color: #95a3b5; font-size: 9px; }
+.allocation-flow > span { display: flex; align-items: center; gap: 7px; }
+.allocation-flow b { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; color: #7b9b91; background: #e8f1ed; font-size: 9px; font-weight: 500; }
+.allocation-day-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.allocation-day-tabs button { display: grid; gap: 4px; padding: 9px 14px; border: 1px solid #e1e8ee; border-radius: 5px; color: #96a3b4; background: white; text-align: left; }
+.allocation-day-tabs button.is-current { border-color: #acc8bd; color: #618678; background: #f0f7f3; }
+.allocation-day-tabs strong { font-size: 11px; font-weight: 500; }
+.allocation-day-tabs span { font-size: 8px; }
+.allocation-state { display: inline-flex; padding: 5px 7px; border-radius: 4px; color: #759887; background: #eef6f1; font-size: 9px; line-height: 1.7; }
+.allocation-state-draft { color: #ab8f61; background: #fcf4e7; }
+.allocation-state-revision { color: #9282af; background: #f4eff8; }
+.allocation-state-cancelled, .allocation-state-reference { color: #8d9aac; background: #eef2f6; }
+.placement-status-count { text-align: left; line-height: 1.8; }
+.placement-row.is-cancelled .placement-site-description > strong { color: #99a6b6; }
+.allocation-cancelled-note { color: #97a3b3; font-size: 10px; }
+.allocation-page .placement-table { min-width: 780px; }
+.allocation-page .placement-table thead th:first-child { width: 265px; }
+.allocation-page .placement-table thead th:last-child { width: 110px; }
+.allocation-page .placement-search-filters { flex-wrap: wrap; }
+.allocation-page .placement-search-filters .site-search { width: 210px; }
+.allocation-duty-id { margin-top: 5px; color: #a0adbb; font-size: 8px; overflow-wrap: anywhere; }
+.allocation-duty-dates { margin-top: 15px; }
+.allocation-next-day { display: inline-block; margin-left: 5px; padding: 1px 4px; border-radius: 3px; color: #9a8aad; background: #f4eff7; font-size: 8px; }
+.allocation-version-compare { display: grid; gap: 5px; margin-top: 15px; padding: 11px; border: 1px solid #e7e0ed; border-radius: 5px; color: #9e91ae; background: #faf8fc; font-size: 9px; line-height: 1.8; }
+.allocation-version-compare strong { color: #8d7ba0; font-weight: 500; }
+.allocation-version-compare p { margin-top: 5px; }
+.allocation-selected-actions { display: grid; gap: 13px; margin-top: 15px; }
+.allocation-selected-actions .allocation-site-link { margin-top: 0; }
+.allocation-selected-actions .secondary-button { width: 100%; height: 33px; font-size: 10px; }
+.allocation-public-preview, .allocation-history { margin-top: 17px; padding-top: 15px; border-top: 1px solid #e9eef3; }
+.allocation-public-preview h4, .allocation-history h4 { display: flex; align-items: center; gap: 5px; color: #778ca2; font-size: 10px; font-weight: 500; }
+.allocation-public-preview dl { display: grid; gap: 11px; margin-top: 13px; }
+.allocation-public-preview dt { color: #a1adbb; font-size: 8px; }
+.allocation-public-preview dd { margin: 4px 0 0; color: #8295aa; font-size: 9px; line-height: 1.8; }
+.allocation-public-preview p { margin-top: 12px; color: #99a7b8; font-size: 8px; line-height: 1.8; }
+.allocation-public-preview .text-button { display: flex; margin-top: 12px; font-size: 9px; }
+.allocation-history ol { display: grid; gap: 14px; margin: 13px 0 0; padding-left: 13px; color: #a1adbc; }
+.allocation-history strong, .allocation-history span { display: block; font-size: 9px; line-height: 1.8; }
+.allocation-history strong { color: #8093aa; font-weight: 500; }
+.allocation-history span { margin-top: 3px; font-size: 8px; }
+.allocation-history p { margin-top: 5px; color: #95a3b5; font-size: 9px; line-height: 1.8; }
+.allocation-board-footnote { display: flex; align-items: start; gap: 7px; padding: 12px 17px; border-top: 1px solid #eef1f5; color: #a0acba; background: #fcfdfe; font-size: 9px; line-height: 1.8; }
+.allocation-board-footnote > .icon { flex-shrink: 0; margin-top: 2px; }
+@media (max-width: 1050px) { .allocation-page .allocation-side-panels { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 760px) { .allocation-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .allocation-flow > .icon { display: none; } .allocation-flow > span { font-size: 9px; } .allocation-page .placement-search-filters .site-search { flex-basis: 100%; } .allocation-page .placement-shift-filter { flex: 1; } .allocation-page .placement-shift-filter select { width: 100%; } .allocation-day-tabs button { padding: 8px 10px; } .allocation-day-tabs strong { font-size: 10px; } .allocation-date-navigation { gap: 6px; } .allocation-page .allocation-side-panels { grid-template-columns: minmax(0, 1fr); } .allocation-heading-actions a { width: 100%; } .allocation-selected-actions .secondary-button { width: auto; justify-self: start; } }

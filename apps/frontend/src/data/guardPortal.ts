@@ -6,6 +6,8 @@ import { reports } from './reports';
 import { companyDefaults } from './settings';
 import { shiftPlans } from './shiftPlanning';
 import { managedSites } from './siteManagement';
+import { mockDutySlots } from './mockDutySlots';
+import type { MockPublicDuty } from './mockDutySlots';
 
 // A fixed fictional officer for reviewing the portal. This is not an authenticated session.
 export const guardOfficer = officers.find((officer) => officer.id === 'G004')!;
@@ -16,18 +18,46 @@ export const guardAttendance = attendanceRecords.filter((record) => record.offic
 export const guardToday = guardAttendance.find((record) => record.date === dashboardDate.iso)!;
 export const guardShiftPlan = shiftPlans.find((plan) => plan.officer.id === guardOfficer.id)!;
 export const guardReports = reports.filter((report) => report.officerId === guardOfficer.id);
+export const guardLoginEmail = 'g004-login@example.invalid';
 
-// Only the reference day's placement is confirmed in the existing sample data.
-export const guardSchedule = [
-  { date: '2026-10-03', weekday: '土', kind: 'completed', label: '勤務終了', site: guardSite },
-  { date: dashboardDate.iso, weekday: '日', kind: 'confirmed', label: '配置済み', site: guardSite },
-  { date: '2026-10-05', weekday: '月', kind: 'pending', label: '配置待ち' },
-  { date: '2026-10-06', weekday: '火', kind: 'pending', label: '配置待ち' },
-  { date: '2026-10-07', weekday: '水', kind: 'pending', label: '配置待ち' },
-  { date: '2026-10-08', weekday: '木', kind: 'pending', label: '配置待ち' },
-  { date: '2026-10-09', weekday: '金', kind: 'off', label: '予定未定' },
-  { date: '2026-10-10', weekday: '土', kind: 'off', label: '予定未定' },
-] as const;
+export type GuardDutySummary = {
+  dutyId: string;
+  date: string;
+  siteName: string;
+  startAt: string;
+  endAt: string;
+  status: 'published' | 'completed' | 'cancelled';
+  publicDuty?: MockPublicDuty;
+};
+
+// Copy only the current officer's public fields into the portal display sample.
+// This filtering is a mock preview, not authentication or access control.
+export const guardPublishedDuties: GuardDutySummary[] = mockDutySlots
+  .filter((slot) => (slot.state === 'published' || slot.state === 'revision') && slot.publicDuty && slot.officers.some((officer) => officer.id === guardOfficer.id))
+  .map((slot) => ({
+    dutyId: slot.dutyId,
+    date: slot.date,
+    siteName: slot.publicDuty!.siteName,
+    startAt: slot.publicDuty!.startAt,
+    endAt: slot.publicDuty!.endAt,
+    status: 'published',
+    publicDuty: slot.publicDuty,
+  }));
+
+const guardCancelledDuties: GuardDutySummary[] = mockDutySlots
+  .filter((slot) => slot.state === 'cancelled' && slot.formerOfficers?.some((officer) => officer.id === guardOfficer.id))
+  .map((slot) => ({ dutyId: slot.dutyId, date: slot.date, siteName: slot.name, startAt: slot.startAt, endAt: slot.endAt, status: 'cancelled' }));
+
+export const guardDutySummaries: GuardDutySummary[] = [
+  { dutyId: 'D20261003-S002-D', date: '2026-10-03', siteName: guardSite.name, startAt: '2026-10-03T09:00', endAt: '2026-10-03T18:00', status: 'completed' },
+  ...guardPublishedDuties,
+  ...guardCancelledDuties,
+];
+
+export const guardSchedule = ['土', '日', '月', '火', '水', '木', '金', '土'].map((weekday, index) => {
+  const date = `2026-10-${String(index + 3).padStart(2, '0')}`;
+  return { date, weekday, duties: guardDutySummaries.filter((duty) => duty.date === date) };
+});
 
 export const guardNotices = [
   { id: 'GN001', category: '現場連絡', title: '工事車両入口の誘導位置を確認してください', date: '10/4 09:20', sender: '田中 太郎・管制担当', unread: true, body: `${guardSite.name}では、歩行者への案内位置を現場担当者と確認してください。車両の出入り時は歩行者の安全確認を優先し、変更点は次の隊員へ申し送ってください。`, site: true },

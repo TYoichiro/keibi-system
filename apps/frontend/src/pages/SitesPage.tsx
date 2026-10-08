@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Icon from '../components/Icon';
+import { MockHistory } from '../components/ManagementUI';
 import { dashboardDate } from '../data/dashboard';
 import { formatSiteDate, managedSites, siteStatuses } from '../data/siteManagement';
 import type { ManagedSite } from '../data/siteManagement';
@@ -24,7 +25,7 @@ function SiteSummary() {
     { label: '登録現場', value: managedSites.length, icon: 'building', color: 'blue', note: 'すべての現場' },
     { label: '稼働中', value: activeSites.length, icon: 'activity', color: 'teal', note: '本日の管制対象' },
     { label: '準備中', value: plannedSites.length, icon: 'calendar', color: 'violet', note: '開始に向けて準備' },
-    { label: '契約更新予定', value: renewalSites.length, icon: 'clock', color: 'amber', note: '取引先と条件を確認' },
+    { label: '契約更新予定（次期）', value: renewalSites.length, icon: 'clock', color: 'amber', note: '参考サンプル' },
   ] as const;
 
   return (
@@ -48,7 +49,7 @@ function SiteRow({ site, selected, onSelect }: { site: ManagedSite; selected: bo
           <span><span className="registry-site-id">{site.id}</span><strong>{site.name}</strong><span className="registry-client">{site.client}</span></span>
         </button>
       </th>
-      <td><span className={`registry-category registry-category-${site.type}`}>{site.category}</span></td>
+      <td><span className={`registry-category registry-category-${site.type}`}>{site.category}{site.type === 'event' ? '（次期）' : ''}</span></td>
       <td><span className="registry-hours">{site.hours}</span><span className={`registry-shift${site.shift === '夜勤' ? ' is-night' : ''}`}>{site.shift}</span></td>
       <td className="registry-required"><strong>{site.required}</strong><span>名</span></td>
       <td><span className="registry-contract-start">{formatSiteDate(site.contractStart)}</span><span className="registry-contract-end">〜 {formatSiteDate(site.contractEnd)}</span>{site.renewalReview && <span className="registry-renewal-tag">更新予定</span>}</td>
@@ -74,6 +75,7 @@ function SiteDetail({ site }: { site?: ManagedSite }) {
         <div className="registry-detail-body">
           <div className="registry-detail-badges"><span className={`registry-category registry-category-${site.type}`}>{site.category}</span><SiteStatusBadge site={site} /></div>
           <h3>{site.name}</h3>
+          {site.type === 'event' && <p className="scope-detail-note">雑踏警備は次期の参考サンプルです。初回は交通誘導・施設警備を扱います。</p>}
           <a className="registry-detail-client registry-client-link" href={`/clients?client=${getClient(site.client)?.id}`}>{site.client}<Icon name="arrow-up-right" size={12} /></a>
           <div className="registry-address"><Icon name="map-pin" size={15} /><span>{site.address}</span></div>
 
@@ -83,7 +85,7 @@ function SiteDetail({ site }: { site?: ManagedSite }) {
           </div>
 
           <div className="registry-detail-section">
-            <h4><Icon name="clock" size={14} />勤務・配置条件</h4>
+            <h4><Icon name="clock" size={14} />勤務枠へコピーする初期値</h4>
             <dl>
               <div><dt>勤務時間</dt><dd>{site.hours}<span className="registry-shift">{site.shift}</span></dd></div>
               <div><dt>基本人数</dt><dd><strong>{site.required}</strong> 名 / 日</dd></div>
@@ -97,13 +99,15 @@ function SiteDetail({ site }: { site?: ManagedSite }) {
             <div className="registry-contact-person"><span className="registry-contact-avatar">{site.contact[0]}</span><div><strong>{site.contact}</strong><span>{site.client}</span></div></div>
             <div className="registry-phone"><Icon name="phone" size={13} /><span>{site.phone}</span><small>サンプル</small></div>
           </div>
+          <p className="scope-detail-note">所属：本社（本店）。基本情報の変更は確定済み勤務へ自動反映せず、公開情報の変更は配置の改訂で扱います。</p>
+          <MockHistory target={`${site.id} · ${site.name}`} />
         </div>
-        <div className="registry-detail-actions"><button type="button" className="secondary-button" title="現場情報の編集は表示サンプルです"><Icon name="edit" size={14} />編集する</button>{site.status === 'active' ? <a className="text-button" href={`/assignments?site=${site.id}`}>本日の配置を見る<Icon name="arrow-up-right" size={14} /></a> : <span className="small-muted">本日の配置対象外</span>}</div>
+        <div className="registry-detail-actions"><a href={`/sites/edit?site=${site.id}`} className="secondary-button"><Icon name="edit" size={14} />編集画面を見る</a>{site.status === 'active' ? <a className="text-button" href={`/assignments?site=${site.id}`}>本日の配置を見る<Icon name="arrow-up-right" size={14} /></a> : site.status === 'planned' ? <a className="text-button" href={`/assignments/new?site=${site.id}`}>勤務枠の作成案を見る<Icon name="arrow-up-right" size={14} /></a> : <span className="small-muted">新規配置の対象外</span>}</div>
       </section>
       <section className="panel registry-memo-panel" aria-labelledby="registry-memo-title">
         <div className="panel-heading"><div className="panel-title"><span className="section-icon"><Icon name="message" size={18} /></span><h2 id="registry-memo-title">現場メモ</h2></div><span className="small-muted">管制担当</span></div>
         <p>{site.note}</p>
-        <div className="registry-memo-footer"><Icon name="help" size={12} /><span>隊員への事前共有にご活用ください</span></div>
+        <div className="registry-memo-footer"><Icon name="help" size={12} /><span>内部メモは本人へ公開せず、公開指示を勤務枠で確認します</span></div>
       </section>
     </aside>
   );
@@ -149,12 +153,12 @@ export default function SitesPage() {
     <main className="dashboard registry-page">
       <div className="page-heading registry-page-heading">
         <div><div className="page-eyebrow"><span className="live-dot" />SITE MANAGEMENT</div><h1>現場管理</h1><p>現場の基本情報と契約・勤務条件をまとめて管理します。</p></div>
-        <div className="registry-heading-actions"><button type="button" className="secondary-button"><Icon name="download" size={16} />一覧を出力</button><button type="button" className="primary-button"><Icon name="plus" size={17} />現場を登録</button></div>
+        <div className="registry-heading-actions"><button type="button" className="secondary-button"><Icon name="download" size={16} />出力（次期）</button><a href="/sites/new" className="primary-button"><Icon name="plus" size={17} />現場を登録</a></div>
       </div>
       <SiteSummary />
       <div className="registry-renewal-banner" role="note">
         <span className="registry-renewal-icon"><Icon name="calendar" size={18} /></span>
-        <div><strong>契約更新予定の現場が{renewalSites.length}件あります</strong><span>取引先と継続予定・勤務条件を確認しましょう。</span></div>
+        <div><strong>次期の参考：契約更新予定 {renewalSites.length}件</strong><span>初回は契約期間の登録まで。更新確認は将来のフローを検討する表示例です。</span></div>
         <button type="button" onClick={() => { clearFilters(); setRenewalOnly(true); }}>対象の現場を確認<Icon name="arrow-right" size={15} /></button>
       </div>
 
@@ -166,7 +170,7 @@ export default function SitesPage() {
           </div>
           <div className="registry-filters">
             <label className="site-search"><Icon name="search" size={15} /><input aria-label="現場名・取引先・所在地で検索" placeholder="現場名・取引先で検索" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} /></label>
-            <label className="registry-type-filter"><select aria-label="警備種別で絞り込み" value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value as CategoryFilter); setPage(0); }}><option value="all">すべての警備種別</option><option value="traffic">交通誘導</option><option value="facility">施設警備</option><option value="event">雑踏警備</option></select><Icon name="chevron-down" size={13} /></label>
+            <label className="registry-type-filter"><select aria-label="警備種別で絞り込み" value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value as CategoryFilter); setPage(0); }}><option value="all">すべての警備種別</option><option value="traffic">交通誘導</option><option value="facility">施設警備</option><option value="event">雑踏警備（次期の参考）</option></select><Icon name="chevron-down" size={13} /></label>
             <button type="button" className={`registry-renewal-filter${renewalOnly ? ' is-selected' : ''}`} aria-pressed={renewalOnly} onClick={() => { setRenewalOnly(!renewalOnly); setPage(0); }}><Icon name="calendar" size={13} />更新予定のみ{renewalOnly && <Icon name="check" size={12} />}</button>
           </div>
           <p className="registry-list-hint"><Icon name="help" size={12} />現場名を選ぶと、勤務条件や連絡先を確認できます。</p>

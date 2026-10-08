@@ -12,7 +12,7 @@
 
 ## 初回実装との対応（2026年10月8日追記）
 
-以下の図は将来の全体業務を含む。初回の範囲・本人の権限は[要件書](../requirements/MVP_REQUIREMENTS.md)を優先し、[画面仕様](../requirements/MVP_SCREEN_SPEC.md)と[実装前レビュー](../requirements/IMPLEMENTATION_READINESS.md)を参照する。今回は資料の準備のみであり、図の実装開始を指示するものではない。
+以下の図は将来の全体業務を含む。初回の範囲・本人の権限は[要件書](../requirements/MVP_REQUIREMENTS.md)を優先し、[画面仕様](../requirements/MVP_SCREEN_SPEC.md)と[実装前レビュー](../requirements/IMPLEMENTATION_READINESS.md)を参照する。この追記時点では資料の準備のみ。その後の依頼で[モックの照合・修正](../MOCK_REVIEW.md)を行ったが、図の保存・打刻・通知等の詳細機能は実装していない。
 
 | この資料の業務 | 初回に扱う範囲 | 次期または既存手段で扱う範囲 |
 | --- | --- | --- |

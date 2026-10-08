@@ -1,0 +1,28 @@
+.authm-page { min-height: 100vh; padding: 46px max(24px, calc((100vw - 1080px) / 2)); background: linear-gradient(130deg, #edf5f4, #f5f7fa 60%); }
+.authm-brand { display: flex; align-items: center; gap: 12px; color: #24465a; text-decoration: none; }
+.authm-brand > span { font-size: 25px; font-weight: 750; letter-spacing: 2px; }
+.authm-brand small { display: block; margin-top: 5px; font-size: 10px; font-weight: 500; letter-spacing: .5px; }
+.authm-layout { display: grid; grid-template-columns: 1fr 420px; gap: 70px; align-items: start; margin-top: 65px; }
+.authm-eyebrow { color: #218c7c; font-size: 12px; }
+.authm-intro h1 { margin: 12px 0; font-size: 30px; }
+.authm-intro > p { color: #6d7e90; font-size: 13px; line-height: 2; }
+.authm-notice { display: flex; gap: 12px; margin: 25px 0; padding: 18px; border: 1px solid #cfe5df; border-radius: 9px; background: #f7fcfa; font-size: 12px; }
+.authm-notice p { margin-top: 7px; line-height: 1.8; color: #647788; }
+.authm-nav { display: grid; margin-bottom: 25px; }
+.authm-nav a { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px solid #dce5e9; color: #62748a; text-decoration: none; font-size: 12px; }
+.authm-nav a[aria-current] { color: #178673; font-weight: 700; }
+.authm-preview { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #326d83; font-size: 12px; text-decoration: none; }
+.authm-card { padding: 30px; }
+.authm-card-heading { display: flex; gap: 12px; align-items: center; margin-bottom: 26px; color: #328e7e; }
+.authm-card-heading h2 { color: #263449; font-size: 19px; }
+.authm-field { display: grid; gap: 8px; margin-bottom: 20px; font-size: 12px; font-weight: 600; }
+.authm-field input { width: 100%; min-width: 0; padding: 12px; border: 1px solid #dce3ea; border-radius: 6px; background: #fbfcfd; color: #33465a; font-weight: 400; }
+.authm-card > button { width: 100%; margin: 6px 0; }
+.authm-account { display: grid; gap: 8px; margin-bottom: 22px; padding: 14px; border-radius: 6px; background: #f0f6f5; font-size: 12px; line-height: 1.8; }
+.authm-account small { color: #6d7f8f; }
+.authm-state { margin-top: 24px; padding-top: 18px; border-top: 1px solid #e7ecf2; font-size: 11px; color: #6c7e90; line-height: 1.9; }
+.authm-state summary { cursor: pointer; color: #41586d; }
+.authm-state p { margin: 12px 0; }
+.authm-state span { display: block; font-size: 10px; }
+@media (max-width: 850px) { .authm-layout { grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 35px; } .authm-card { padding: 22px; } }
+@media (max-width: 600px) { .authm-page { padding: 25px 20px; } .authm-layout { display: flex; flex-direction: column; gap: 25px; margin-top: 32px; } .authm-intro, .authm-card { width: 100%; min-width: 0; } .authm-intro h1 { font-size: 25px; } .authm-nav { grid-template-columns: 1fr 1fr; gap: 0 18px; } }
