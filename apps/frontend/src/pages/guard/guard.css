@@ -316,9 +316,6 @@
 .gp-login-user { display: flex; align-items: center; gap: 11px; margin-top: 25px; padding-top: 23px; border-top: 1px solid var(--gp-border); }
 .gp-login-user strong { display: block; font-size: 12px; }
 .gp-login-user small { color: var(--gp-muted); font-size: 11px; }
-.gp-password { position: relative; display: flex; }
-.gp-password input { padding-right: 60px; }
-.gp-password button { position: absolute; top: 0; right: 0; height: 100%; padding: 0 12px; border: 0; border-radius: 6px; color: #6b9180; background: transparent; font-size: 11px; }
 
 @media (min-width: 1700px) { .gp-content { padding-top: 43px; } }
 @media (max-width: 1200px) {

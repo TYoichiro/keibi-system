@@ -36,8 +36,8 @@ function OfficerEditor({ isNew, id }: { isNew: boolean; id: string | null }) {
   const affected = isNew ? [] : mockDutySlots.filter((slot) => slot.publicDuty && slot.officers.some((item) => item.id === officer.id));
   return <>
     <div className="mock-editor-main">
-      <FieldGroup number="01" title="隊員の基本情報" description="隊員情報とログイン用アカウントは別に管理します。">
-        <Field label="隊員番号" required value={isNew ? '' : officer.id} hint="同じ会社で識別する番号" /><Field label="氏名" required value={isNew ? '' : officer.name} /><BranchField /><Field label="在籍状態" required value={isNew ? 'active' : officer.status} options={[{ value: 'active', label: '在籍' }, { value: 'leave', label: '休職' }, { value: 'retired', label: '退職' }]} /><Field label="業務連絡先（電話）" type="tel" value={isNew ? '' : officer.phone} /><Field label="業務連絡先（メール）" type="email" value={isNew ? '' : officer.email} hint="ログインメールとは別の項目です" />
+      <FieldGroup number="01" title="隊員の基本情報" description="隊員情報と、Googleでログインするアプリ利用者は別に管理します。">
+        <Field label="隊員番号" required value={isNew ? '' : officer.id} hint="同じ会社で識別する番号" /><Field label="氏名" required value={isNew ? '' : officer.name} /><BranchField /><Field label="在籍状態" required value={isNew ? 'active' : officer.status} options={[{ value: 'active', label: '在籍' }, { value: 'leave', label: '休職' }, { value: 'retired', label: '退職' }]} /><Field label="業務連絡先（電話）" type="tel" value={isNew ? '' : officer.phone} /><Field label="業務連絡先（メール）" type="email" value={isNew ? '' : officer.email} hint="Google連携・招待先メールとは別の項目です" />
       </FieldGroup>
       <FieldGroup number="02" title="資格の基本情報・確認" description="資格を保有しているという表示と、証明内容の確認を分けます。">
         <Field label="資格名称・区分" value={isNew ? '' : officer.qualifications.join('、')} hint="例：交通誘導警備業務2級" /><Field label="確認状態" value="unconfirmed" options={[{ value: 'unconfirmed', label: '未確認' }, { value: 'confirmed', label: '確認済み（表示例）' }, { value: 'invalid', label: '無効・要再確認' }]} /><Field label="有効開始日" type="date" /><Field label="有効終了日" type="date" /><Field label="確認者" /><Field label="確認日" type="date" /><Field label="確認根拠・補足" wide multiline hint="証明書の添付・教育記録の管理は次期の範囲です" />
@@ -48,8 +48,8 @@ function OfficerEditor({ isNew, id }: { isNew: boolean; id: string | null }) {
     </div>
     <aside className="mock-editor-side">
       <InfoCard title="本社の隊員登録枠" icon="user-plus"><div className="mock-editor-capacity"><strong>39<small> / 50人</small></strong><span>残り 11枠</span></div><div className="mock-editor-capacity-track"><span /></div><p>在籍37人＋休職2人。退職1人は履歴を残して枠から除きます。</p><p>本店・支店ごとの初期枠は10人。この本店は増枠後の表示例です。</p><a className="text-button" href="/settings">登録枠の設定を確認<Icon name="arrow-right" size={13} /></a></InfoCard>
-      <InfoCard title="状態・所属変更の影響" icon="alert"><span className="mock-editor-small-tag">保存前に確認する表示例</span><p>休職・退職・異動では、未終了の確定勤務を確認します。既存予定を自動で取り消しません。</p>{affected.length > 0 ? <ul>{affected.map((slot) => <li key={slot.dutyId}><strong>{slot.name}</strong><span>{formatDutyDateTime(slot.startAt)} ～ {formatDutyDateTime(slot.endAt)}</span><a href={`/assignments?duty=${slot.dutyId}&date=${slot.date}`}>勤務枠を確認</a></li>)}</ul> : <p>選択中の隊員に該当する確定勤務の表示例はありません。</p>}<p>退職時は対応アカウントの停止も確認。復職・異動先では登録枠を再確認します。</p></InfoCard>
-      <InfoCard title="確認が必要な条件"><p>資格の有効期間・責任者の条件はQ06で未決です。この画面は正式な配置可否を判定しません。</p><p>アカウント未発行の隊員も登録・配置できる想定です。利用者発行は設定画面で確認します。</p></InfoCard>
+      <InfoCard title="状態・所属変更の影響" icon="alert"><span className="mock-editor-small-tag">保存前に確認する表示例</span><p>休職・退職・異動では、未終了の確定勤務を確認します。既存予定を自動で取り消しません。</p>{affected.length > 0 ? <ul>{affected.map((slot) => <li key={slot.dutyId}><strong>{slot.name}</strong><span>{formatDutyDateTime(slot.startAt)} ～ {formatDutyDateTime(slot.endAt)}</span><a href={`/assignments?duty=${slot.dutyId}&date=${slot.date}`}>勤務枠を確認</a></li>)}</ul> : <p>選択中の隊員に該当する確定勤務の表示例はありません。</p>}<p>退職時は対応するアプリ利用者の利用停止も確認します。本人のGoogleアカウントには影響しません。復職・異動先では登録枠を再確認します。</p></InfoCard>
+      <InfoCard title="確認が必要な条件"><p>資格の有効期間・責任者の条件はQ06で未決です。この画面は正式な配置可否を判定しません。</p><p>アプリ利用者への招待・Google連携前の隊員も登録・配置できる想定です。利用者の招待は設定画面で確認します。</p></InfoCard>
     </aside>
   </>;
 }
@@ -58,15 +58,15 @@ function ClientEditor({ isNew, id }: { isNew: boolean; id: string | null }) {
   const client = clients.find((item) => item.id === id) ?? clients[0];
   return <>
     <div className="mock-editor-main">
-      <FieldGroup number="01" title="取引先の基本情報" description="初回は業務上必要な名称・窓口と所属を登録します。">
-        <Field label="取引先コード" required value={isNew ? '' : client.id} /><Field label="取引先名" required value={isNew ? '' : client.name} /><BranchField /><Field label="状態" required value="active" options={[{ value: 'active', label: '利用中' }, { value: 'stopped', label: '停止' }]} hint="停止の意味・新規勤務への影響は確認前の案" />
+      <FieldGroup number="01" title="取引先の基本情報" description="取引先は会社共通で1件を登録し、各拠点の現場から参照します。登録・編集の権限は確認前の案です。">
+        <Field label="取引先コード" required value={isNew ? '' : client.id} /><Field label="取引先名" required value={isNew ? '' : client.name} /><div className="mock-editor-field"><span>共有範囲</span><strong>東京セキュリティ / 会社共通</strong><span className="mock-editor-field-hint">取引先に所属拠点は設定しません</span></div><Field label="状態" required value="active" options={[{ value: 'active', label: '利用中' }, { value: 'stopped', label: '停止' }]} hint="停止の意味・新規勤務への影響は確認前の案" />
       </FieldGroup>
       <FieldGroup number="02" title="業務窓口" description="会社・管制で利用する連絡先です。">
         <Field label="業務窓口の担当者名" value={isNew ? '' : client.contact} /><Field label="電話番号" type="tel" value={isNew ? '' : client.phone} /><Field label="メールアドレス" type="email" value={isNew ? '' : client.email} wide /><Field label="変更理由" multiline wide />
       </FieldGroup>
     </div>
     <aside className="mock-editor-side">
-      <InfoCard title="関連する現場" icon="building">{isNew ? <p>登録後に現場とIDで関連付ける想定です。</p> : <ul>{client.sites.map((site) => <li key={site.id}><a href={`/sites?site=${site.id}`}>{site.name}</a><span>{site.id}</span></li>)}</ul>}<p>名称の変更で関連現場を付け替えません。所属・状態の変更は関連する未終了勤務への影響を確認します。</p></InfoCard>
+      <InfoCard title="関連する現場" icon="building">{isNew ? <p>登録後に各拠点の現場と共通の取引先IDで関連付ける想定です。</p> : <ul>{client.sites.map((site) => <li key={site.id}><a href={`/sites?site=${site.id}`}>{site.name}</a><span>{site.id}</span></li>)}</ul>}<p>名称の変更で関連現場を付け替えません。状態・窓口の変更は関連する未終了勤務への影響を確認します。</p><p>管制担当・閲覧者は、所属拠点に関係する取引先だけを参照します。権限制御は未実装です。</p></InfoCard>
       <InfoCard title="初回に入力する範囲"><p>締め・支払条件、請求、契約書類の添付・保管は次期の範囲です。</p><p>警備員には担当勤務に必要な公開連絡先だけを表示する想定です。</p></InfoCard>
     </aside>
   </>;

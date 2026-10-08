@@ -25,11 +25,11 @@ import { reports } from './data/reports';
 import type { ComponentType } from 'react';
 
 const mockPages: Record<string, { title: string; component: ComponentType } | undefined> = {
-  '/login': { title: 'ログイン', component: AuthMockPage },
-  '/account/activate': { title: '利用開始の設定', component: AuthMockPage },
-  '/account/reset': { title: 'パスワード再設定', component: AuthMockPage },
-  '/account/mfa': { title: '管理者の多要素認証', component: AuthMockPage },
-  '/account/security': { title: '認証情報の変更', component: AuthMockPage },
+  '/login': { title: 'Googleでログイン', component: AuthMockPage },
+  '/account/activate': { title: '招待の確認・Google連携', component: AuthMockPage },
+  '/account/reset': { title: 'Googleアカウントの回復', component: AuthMockPage },
+  '/account/mfa': { title: 'Googleのセキュリティ設定', component: AuthMockPage },
+  '/account/security': { title: 'Google連携・ログアウト', component: AuthMockPage },
   '/officers/new': { title: '隊員登録', component: MockEditorPage },
   '/officers/edit': { title: '隊員編集', component: MockEditorPage },
   '/clients/new': { title: '取引先登録', component: MockEditorPage },
@@ -47,7 +47,7 @@ const mockPages: Record<string, { title: string; component: ComponentType } | un
   '/shifts': { title: 'シフト・勤務希望', component: ShiftsPage },
   '/reports': { title: '日報・申し送り', component: ReportsPage },
   '/guard': { title: '警備員ホーム', component: GuardHomePage },
-  '/guard/login': { title: '警備員ログイン', component: GuardLoginPage },
+  '/guard/login': { title: 'Googleで警備員ログイン', component: GuardLoginPage },
   '/guard/schedule': { title: '勤務予定', component: GuardSchedulePage },
   '/guard/site': { title: '現場情報', component: GuardSitePage },
   '/guard/attendance': { title: '出退勤・勤務実績', component: GuardAttendancePage },
@@ -121,7 +121,7 @@ function Sidebar({ activePath }: { activePath: string }) {
         <div className="sidebar-user">
           <span className="avatar avatar-dark">田</span>
           <span className="user-name">田中 太郎<span>管制担当者</span></span>
-          <a className="icon-button" href="/account/security" aria-label="認証情報変更・ログアウトの画面案"><Icon name="more" size={19} /></a>
+          <a className="icon-button" href="/account/security" aria-label="Google連携・ログアウトの画面案"><Icon name="more" size={19} /></a>
         </div>
       </div>
     </aside>
@@ -136,7 +136,7 @@ function Header({ title }: { title: string }) {
         <a href="/guard" className="portal-preview-link"><Icon name="shield" size={16} /><span>警備員画面</span></a>
         <span className="mock-label"><span />プレビューモック</span><span className="header-divider" />
         <a href="/login" className="icon-button" aria-label="ログイン画面の見本"><Icon name="shield" size={20} /></a>
-        <a href="/account/security" className="icon-button" aria-label="認証情報変更・ログアウトの画面案"><Icon name="settings" size={20} /></a>
+        <a href="/account/security" className="icon-button" aria-label="Google連携・ログアウトの画面案"><Icon name="settings" size={20} /></a>
         <span className="avatar avatar-light" aria-label="田中 太郎">田</span>
       </div>
     </header>

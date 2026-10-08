@@ -16,13 +16,20 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 | 区分 | 状況 |
 | --- | --- |
 | 画面 | 既存の管理者・管制9画面（設定4カテゴリ）・警備員14画面を維持し、認証5・登録編集8ルートを追加。初回対象と次期の参考を区別 |
-| 画面操作 | 検索、絞り込み、ページ送り、対象日・勤務枠の選択、各フォームの入力見本。保存・確定・取消・利用者発行は表示のみ |
+| 画面操作 | 検索、絞り込み、ページ送り、対象日・勤務枠の選択、各フォームの入力見本。保存・確定・取消・Google認証・利用者招待は表示のみ |
 | 表示確認 | PC・スマートフォン用の画面サンプルを`docs/mockups/`に保存。実施した検証と限界は`docs/DEVELOPMENT.md`に記録 |
 | データ | TypeScript内の架空のサンプル。主な基準日は2026年10月4日で、現在日付には連動しない |
 | API・DB | HonoとPostgreSQLの接続基盤、および接続確認用の`GET /api/health`を実装 |
 | 未実装 | ログイン、会社ごとのデータ分離、権限制御、業務テーブル・API、登録・更新・保存、実際の通知・出力 |
 
+ログイン方式は全利用者のGoogleログイン（OAuth 2.0 + OIDC）に確定しました。本人のGoogleアカウントを使い、このシステム専用のログインID・パスワードは発行・保持しません。会社・拠点・役割を管理する内部利用者ID、Google識別子との関連付け、アプリのセッションは保持する設計です。パスワード・二段階認証・アカウント回復はGoogle側で行います。実際のGoogle連携は未実装で、画面は表示確認用です。
+
+利用できるアカウントは個人Gmailと会社のGoogle Workspaceです。Google側の二段階認証は会社管理者に必須、管制担当・閲覧者・警備員には推奨とします。アプリのログイン状態は全員共通で「本人の操作なし24時間・ログインから最長1か月」とし、先に到達した期限で失効させます。自動更新は本人の操作に数えません。
+
+利用者は会社管理者が登録した本人のGoogleメールへ招待し、リンクは発行から7日間有効、再招待で旧リンクを無効にします。Googleアカウント変更は会社管理者が本人確認の上で承認します。管理者自身の変更は別の会社管理者、ほかにいなければ運営者が承認します。最初の会社管理者登録と全管理者がログインできなくなった場合の復旧は、運営者が会社・本人を確認して対応します。ここでいう運営者はサービス提供側です。
+
 会社・拠点の表示や設定画面の権限表はモックです。現時点でマルチテナント対応や権限制御が完成しているわけではありません。
+支店追加・警備員登録枠の増加は、本店に所属する会社管理者だけに許可する方針です。取引先は会社共通で1件を登録し、各拠点の現場から参照します。管制担当・閲覧者には所属拠点に関係する取引先だけを公開します。共有する取引先の編集担当と、異動後の過去履歴の閲覧範囲は確認中です。
 各画面の具体的な操作範囲は、下の「画面のモック」に記載しています。
 管理画面ヘッダーの「警備員画面」から警備員ポータルへ、警備員画面の「管理者モック」から管理画面へ移動できます。この切り替えは表示確認用で、認証・権限の切り替えではありません。
 
@@ -39,13 +46,14 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 | [状態遷移・変更時の影響](docs/requirements/MVP_STATE_TRANSITIONS.md) | 改訂・破棄・取消・日時境界、退職・資格・現場・異動と確定済み予定の扱い |
 | [API契約案](docs/requirements/MVP_API_CONTRACT.md) | 業務APIの入力・公開項目・エラー・更新競合・再送結果の契約案 |
 | [画面仕様案](docs/requirements/MVP_SCREEN_SPEC.md) | 既存23モックの初回採否、認証・編集・勤務選択の追加画面案、入力・通信失敗・スマートフォンの確認条件 |
-| [試験運用準備票](docs/requirements/PILOT_OPERATIONS.md) | 発行・MFA復旧・変更連絡・障害復旧・保持削除の記入票と公式参考資料 |
+| [Googleログイン設計](docs/requirements/GOOGLE_AUTH_DESIGN.md) | 確定したGoogle専用方針、招待・識別子・セッション・認可の設計、Google側の回復と残る運用条件 |
+| [試験運用準備票](docs/requirements/PILOT_OPERATIONS.md) | 利用者招待・Google側の認証と回復・変更連絡・障害復旧・保持削除の記入票と公式参考資料 |
 | [AI Agentへの実装引き継ぎ](docs/requirements/AI_IMPLEMENTATION_HANDOFF.md) | 将来の実装依頼テンプレート、段階ごとの成果と着手条件、受入シナリオ |
 | [SECURITY.md](SECURITY.md) | API・DBの既存の対策と、認証・認可や本番公開に向けた実装範囲 |
 | [セキュリティチェックリスト](docs/SECURITY_CHECKLIST.md) | 警備業務の個人情報・現場情報を守るための60項目、優先度、完了条件、公開前の検証例 |
 
 次の作業では、まず本READMEと`AGENTS.md`、`docs/DEVELOPMENT.md`を参照してください。
-2026年10月8日のレビューで補足した資料は提案・確認用であり、未決の業務条件やAPI仕様を承認済みにしたものではありません。その後のユーザー依頼に従い、フローと要件に合わせてモックだけを修正しました。詳細機能の実装は行わず、業務API・保存・認証等の実装開始には別途の依頼が必要です。
+2026年10月8日のレビューで補足した資料は提案・確認用であり、未決の業務条件やAPI仕様を承認済みにしたものではありません。その後のユーザー依頼に従い、フローと要件に合わせてモックを修正し、Googleログイン方針を全資料と関連モックへ反映しました。ユーザー回答により、個人Gmail・会社Workspaceの利用、会社管理者の二段階認証必須とほかの3役割への推奨、操作なし24時間・最長1か月のセッション期限、7日間のメール招待、関連付け変更の承認担当、最初の管理者登録と全管理者利用不能時の運営者対応も確定しました。本人確認記録・不達対応等の詳細運用や管理者の二段階認証の強制・確認方法等は引き続き確認中です。詳細機能の実装は行わず、業務API・保存・認証等の実装開始には別途の依頼が必要です。
 画面や機能を追加・変更した際は、動作する部分と表示のみの部分が分かるように、これらの資料も更新します。
 
 ## 管理者・管制向けの画面のモック
@@ -96,7 +104,7 @@ http://localhost:5173/sites で現場一覧と選択した現場の詳細を確�
 
 ### 取引先管理
 
-http://localhost:5173/clients で取引先8社の業務窓口、所属拠点・状態、関連現場を表示します。締め・支払条件と契約書類の確認状況は次期の参考として区別しています。
+http://localhost:5173/clients で会社共通の取引先8社の業務窓口、共有範囲・状態、関連現場を表示します。締め・支払条件と契約書類の確認状況は次期の参考として区別しています。
 取引先と現場の関係は現場管理の16件を共用し、詳細から関連現場へ移動できます。
 検索、契約書類の確認待ちによる絞り込み、詳細選択が動作します。
 `/clients?client=C002`で取引先を指定し、`/clients?filter=pending`で契約書類の確認待ちを表示できます。
@@ -167,12 +175,12 @@ PCではサイドバー下部、スマートフォンでは上部メニューの
 - 会社・拠点: 本社（本店）の登録枠39／50人、横浜支店の追加後の例0／10人。各拠点初期10人、在籍・休職を算入し退職は除く説明と、対象拠点だけの増枠見本。
 - 管制・勤怠（次期の参考）: 標準の勤務時間・休憩時間、上番・下番確認のタイミング、管制画面の表示。
 - 通知設定（次期の参考）: 配置不足・上番・下番・教育予定の通知、アプリ内・メールでの受け取り方法。
-- 利用者・権限: 架空の利用者6名と所属・本人用メール・隊員対応。会社管理者・管制担当・閲覧者・警備員の4役割、発行準備・停止、権限変更の影響と履歴の見本。
+- 利用者・権限: 架空の利用者6名と所属・Googleメール例・隊員対応。会社管理者・管制担当・閲覧者・警備員の4役割、招待準備・利用停止、権限変更の影響と履歴の見本。Googleアカウント自体の発行・停止は行いません。
 
 カテゴリ切り替え、入力値・選択肢・スイッチの変更、「元に戻す」、利用者の検索・権限による絞り込みを確認できます。
 `/settings?section=operations`、`/settings?section=notifications`、`/settings?section=members`でカテゴリを直接開けます。
 会社共通の設定と本社向けの設定を区別して表示します。入力した値は画面内だけのプレビューで、他の業務画面には反映されず、再読み込みで初期値に戻ります。
-保存・支店追加・登録枠増加・利用者発行・停止・権限変更は表示のみで、API送信やメール送信は行いません。横浜支店に所属する業務データはなく、実際の認証・権限制御は今後実装します。
+保存・支店追加・登録枠増加・利用者招待・利用停止・権限変更は表示のみで、API送信やメール送信は行いません。横浜支店に所属する業務データはなく、実際のGoogle認証・権限制御は今後実装します。
 会社情報・アカウント・権限・設定値は架空のサンプルで、`apps/frontend/src/data/settings.ts`で管理します。
 
 画面サンプル:
@@ -186,15 +194,15 @@ PCではサイドバー下部、スマートフォンでは上部メニューの
 
 ## 認証・登録編集の追加モック
 
-初回の業務フローで不足していた入口と入力・確認項目の見本です。フォーム入力と画面移動を確認できますが、認証・登録・保存・公開・取消は行いません。認証方式、資格・責任者の条件、公開期間などの未決事項は案と表示しています。
+初回の業務フローで不足していた入口と入力・確認項目の見本です。フォーム入力と画面移動を確認できますが、認証・登録・保存・公開・取消は行いません。Google認証ボタンは表示のみで、別のモック閲覧リンクからサンプル画面を開きます。利用者のパスワード・OTPを入力する欄はありません。資格・責任者の条件、公開期間、Google認証の運用詳細などの未決事項は案と表示しています。
 
 | 画面 | URL例 | PC | スマートフォン |
 | --- | --- | --- | --- |
-| 管理者・管制・閲覧者ログイン | `/login` | [画像](docs/mockups/auth-login-desktop.png) | [画像](docs/mockups/auth-login-mobile.png) |
-| 初回有効化 | `/account/activate` | [画像](docs/mockups/auth-activate-desktop.png) | [画像](docs/mockups/auth-activate-mobile.png) |
-| パスワード再設定 | `/account/reset` | [画像](docs/mockups/auth-reset-desktop.png) | [画像](docs/mockups/auth-reset-mobile.png) |
-| 管理者MFA | `/account/mfa` | [画像](docs/mockups/auth-mfa-desktop.png) | [画像](docs/mockups/auth-mfa-mobile.png) |
-| 認証情報変更・ログアウト | `/account/security` | [画像](docs/mockups/auth-security-desktop.png) | [画像](docs/mockups/auth-security-mobile.png) |
+| 管理者・管制・閲覧者のGoogleログイン | `/login` | [画像](docs/mockups/auth-login-desktop.png) | [画像](docs/mockups/auth-login-mobile.png) |
+| 招待確認・初回Google連携 | `/account/activate` | [画像](docs/mockups/auth-activate-desktop.png) | [画像](docs/mockups/auth-activate-mobile.png) |
+| Googleアカウントの回復案内 | `/account/reset` | [画像](docs/mockups/auth-reset-desktop.png) | [画像](docs/mockups/auth-reset-mobile.png) |
+| Googleの二段階認証・セキュリティ案内 | `/account/mfa` | [画像](docs/mockups/auth-mfa-desktop.png) | [画像](docs/mockups/auth-mfa-mobile.png) |
+| Google連携・アプリのログアウト | `/account/security` | [画像](docs/mockups/auth-security-desktop.png) | [画像](docs/mockups/auth-security-mobile.png) |
 | 隊員登録 | `/officers/new` | [画像](docs/mockups/officer-editor-new-desktop.png) | [画像](docs/mockups/officer-editor-new-mobile.png) |
 | 隊員編集 | `/officers/edit?officer=G004` | [画像](docs/mockups/officer-editor-desktop.png) | [画像](docs/mockups/officer-editor-mobile.png) |
 | 取引先登録 | `/clients/new` | [画像](docs/mockups/client-editor-new-desktop.png) | [画像](docs/mockups/client-editor-new-mobile.png) |
@@ -219,7 +227,7 @@ http://localhost:5173/guard で警備員ポータルを開けます。
 
 | 画面 | URL | 主な表示・確認操作 | PC | スマートフォン |
 | --- | --- | --- | --- | --- |
-| ログイン | `/guard/login` | 会社コード・メール・パスワードの表示例、サンプル画面への移動 | [画像](docs/mockups/guard-login-desktop.png) | [画像](docs/mockups/guard-login-mobile.png) |
+| Googleログイン | `/guard/login` | Googleログインボタンの表示例と、別のモック閲覧リンク | [画像](docs/mockups/guard-login-desktop.png) | [画像](docs/mockups/guard-login-mobile.png) |
 | ホーム | `/guard` | 本日の確定予定なし・次の確定勤務、準備と持ち物の確認 | [画像](docs/mockups/guard-desktop.png) | [画像](docs/mockups/guard-mobile.png) |
 | 勤務予定 | `/guard/schedule` | 日付選択、本人の確定予定・終了／取消概要、対象勤務への移動 | [画像](docs/mockups/guard-schedule-desktop.png) | [画像](docs/mockups/guard-schedule-mobile.png) |
 | 現場情報 | `/guard/site?duty=D20261005-S002-D` | 対象勤務の開始・終了日時、集合場所、公開指示、業務連絡先 | [画像](docs/mockups/guard-site-desktop.png) | [画像](docs/mockups/guard-site-mobile.png) |
@@ -232,7 +240,7 @@ http://localhost:5173/guard で警備員ポータルを開けます。
 | お知らせ（次期） | `/guard/notices` | 独立した本人向け連絡、未読絞り込み・確認済みプレビュー | [画像](docs/mockups/guard-notices-desktop.png) | [画像](docs/mockups/guard-notices-mobile.png) |
 | 教育・資格（次期参考） | `/guard/education` | 資格と受講記録、研修予定・資料名の参考例。資格基本情報はマイページにも表示 | [画像](docs/mockups/guard-education-desktop.png) | [画像](docs/mockups/guard-education-mobile.png) |
 | 連絡先・ヘルプ | `/guard/contact` | 管制の連絡先、選択した確定勤務の業務連絡先、初回のFAQ | [画像](docs/mockups/guard-contact-desktop.png) | [画像](docs/mockups/guard-contact-mobile.png) |
-| マイページ | `/guard/profile` | 本人情報・基本資格の閲覧、業務メールとログインメール、認証情報変更への入口 | [画像](docs/mockups/guard-profile-desktop.png) | [画像](docs/mockups/guard-profile-mobile.png) |
+| マイページ | `/guard/profile` | 本人情報・基本資格の閲覧、業務メールとGoogleメール例、Google連携・アプリのログアウトへの入口 | [画像](docs/mockups/guard-profile-desktop.png) | [画像](docs/mockups/guard-profile-mobile.png) |
 
 `/guard/schedule?date=2026-10-05`で次の確定予定、`/guard/schedule?date=2026-10-06`で取消概要、`/guard/site`で対象勤務の選択、`/guard/contact?duty=D20261005-S002-D`で勤務に対応する業務連絡先を開けます。終了・取消された予定のURLでは集合場所・指示・業務連絡先を表示しない画面案です。
 
@@ -244,7 +252,7 @@ http://localhost:5173/guard で警備員ポータルを開けます。
 入力・チェック・確認状態は画面内だけのプレビューで、移動・再読み込みで初期値に戻ります。
 提出・保存・下番報告・発信などのモックボタンは「送信・保存・発信は行っていません」と表示するだけです。
 ファイル選択はファイル名の確認のみで、読込・アップロード・保管は行いません。実際の地図・経路案内も未実装です。本人連絡先の直接編集・通知設定はマイページの次期参考欄へ分けています。
-ログイン・パスワード再設定・打刻・申請・日報送信・通知配信・資料の閲覧やダウンロードは実装していません。
+Googleログイン・初回連携・アプリのログアウト・打刻・申請・日報送信・通知配信・資料の閲覧やダウンロードは実装していません。パスワード回復・二段階認証はGoogleの公式画面へ案内します。
 本人向けの表示範囲は固定サンプルの抽出です。管理画面へのアクセス防止や会社・利用者の認可は、本実装時にAPI側で設計・実装します。
 
 ## 画面を起動する
@@ -483,8 +491,8 @@ npm run dev:frontend
 
 HTTPヘッダー、送信元・CSRFチェック、本文サイズ制限、接続元によるレート制限、
 内部情報を含まないエラー応答、設定値の検証を組み込んでいます。
-入力検証用の`validateJson()`と、Argon2idの`hashPassword()`・`verifyPassword()`も利用できます。
-利用例と本番公開前に必要な認証・認可・HTTPS設定は[SECURITY.md](SECURITY.md)を参照してください。
+入力検証用の`validateJson()`を利用できます。既存のArgon2idヘルパーは未使用の基盤で、Google専用の利用者認証には採用しません。
+Google認証の実装条件と本番公開前に必要な認可・HTTPS設定は[SECURITY.md](SECURITY.md)と[Googleログイン設計](docs/requirements/GOOGLE_AUTH_DESIGN.md)を参照してください。
 GitHub Actionsでチェックと依存パッケージ監査を実行し、Dependabotで更新を確認する設定も追加しています。
 
 ## 参考

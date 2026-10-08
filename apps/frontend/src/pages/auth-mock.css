@@ -2,7 +2,7 @@
 .authm-brand { display: flex; align-items: center; gap: 12px; color: #24465a; text-decoration: none; }
 .authm-brand > span { font-size: 25px; font-weight: 750; letter-spacing: 2px; }
 .authm-brand small { display: block; margin-top: 5px; font-size: 10px; font-weight: 500; letter-spacing: .5px; }
-.authm-layout { display: grid; grid-template-columns: 1fr 420px; gap: 70px; align-items: start; margin-top: 65px; }
+.authm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 70px; align-items: start; margin-top: 65px; }
 .authm-eyebrow { color: #218c7c; font-size: 12px; }
 .authm-intro h1 { margin: 12px 0; font-size: 30px; }
 .authm-intro > p { color: #6d7e90; font-size: 13px; line-height: 2; }
@@ -15,8 +15,14 @@
 .authm-card { padding: 30px; }
 .authm-card-heading { display: flex; gap: 12px; align-items: center; margin-bottom: 26px; color: #328e7e; }
 .authm-card-heading h2 { color: #263449; font-size: 19px; }
-.authm-field { display: grid; gap: 8px; margin-bottom: 20px; font-size: 12px; font-weight: 600; }
-.authm-field input { width: 100%; min-width: 0; padding: 12px; border: 1px solid #dce3ea; border-radius: 6px; background: #fbfcfd; color: #33465a; font-weight: 400; }
+.authm-copy { margin: 18px 0; color: #41566b; font-size: 12px; line-height: 1.9; }
+.authm-muted { color: #697d90; font-size: 11px; }
+.authm-facts { margin: 0 0 24px; font-size: 12px; line-height: 1.9; }
+.authm-facts > div { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid #e7ecf2; }
+.authm-facts dt { color: #697d90; }
+.authm-facts dd { margin: 0; color: #34495e; overflow-wrap: anywhere; }
+.authm-external { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 44px; margin: 12px 0; text-align: center; text-decoration: none; line-height: 1.7; }
+.authm-external > svg { flex-shrink: 0; }
 .authm-card > button { width: 100%; margin: 6px 0; }
 .authm-account { display: grid; gap: 8px; margin-bottom: 22px; padding: 14px; border-radius: 6px; background: #f0f6f5; font-size: 12px; line-height: 1.8; }
 .authm-account small { color: #6d7f8f; }

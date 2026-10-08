@@ -18,6 +18,7 @@ export const guardAttendance = attendanceRecords.filter((record) => record.offic
 export const guardToday = guardAttendance.find((record) => record.date === dashboardDate.iso)!;
 export const guardShiftPlan = shiftPlans.find((plan) => plan.officer.id === guardOfficer.id)!;
 export const guardReports = reports.filter((report) => report.officerId === guardOfficer.id);
+// Display/invitation example only; this fictional email is not a real Google identity.
 export const guardLoginEmail = 'g004-login@example.invalid';
 
 export type GuardDutySummary = {
