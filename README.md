@@ -11,7 +11,7 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 
 ## 現在の開発状況
 
-更新日: 2026年10月5日（日本時間）
+更新日: 2026年10月8日（日本時間）
 
 | 区分 | 状況 |
 | --- | --- |
@@ -32,9 +32,19 @@ DBにはPostgreSQL 18を使い、3つのサービスをDocker Composeで起動�
 | --- | --- |
 | [AGENTS.md](AGENTS.md) | AIが作業するときの方針、編集の基準、確認するコマンド |
 | [開発状況・実装ガイド](docs/DEVELOPMENT.md) | 作成済みの画面、ソースの配置、データの関係、検証履歴、未決事項と今後の実装候補 |
+| [初回実装の要件書 草案](docs/requirements/MVP_REQUIREMENTS.md) | 初回に実装する機能、業務ルール、利用者ごとの権限表、実装前の確認事項 |
+| [初回のデータ設計案](docs/requirements/MVP_DATA_DESIGN.md) | 会社・利用者・隊員・現場・配置の関係図、拠点ごとの登録枠、保存項目、会社境界、配置変更と重複防止の設計案 |
+| [実装前レビュー・不足資料の案内](docs/requirements/IMPLEMENTATION_READINESS.md) | 考慮不足と実装への影響、未決事項D01〜D16、判断する時期。補足資料の入口 |
+| [状態遷移・変更時の影響](docs/requirements/MVP_STATE_TRANSITIONS.md) | 改訂・破棄・取消・日時境界、退職・資格・現場・異動と確定済み予定の扱い |
+| [API契約案](docs/requirements/MVP_API_CONTRACT.md) | 業務APIの入力・公開項目・エラー・更新競合・再送結果の契約案 |
+| [画面仕様案](docs/requirements/MVP_SCREEN_SPEC.md) | 23モックの初回採否、不足する認証・編集操作、入力・通信失敗・スマートフォンの確認条件 |
+| [試験運用準備票](docs/requirements/PILOT_OPERATIONS.md) | 発行・MFA復旧・変更連絡・障害復旧・保持削除の記入票と公式参考資料 |
+| [AI Agentへの実装引き継ぎ](docs/requirements/AI_IMPLEMENTATION_HANDOFF.md) | 将来の実装依頼テンプレート、段階ごとの成果と着手条件、受入シナリオ |
 | [SECURITY.md](SECURITY.md) | API・DBの既存の対策と、認証・認可や本番公開に向けた実装範囲 |
+| [セキュリティチェックリスト](docs/SECURITY_CHECKLIST.md) | 警備業務の個人情報・現場情報を守るための60項目、優先度、完了条件、公開前の検証例 |
 
 次の作業では、まず本READMEと`AGENTS.md`、`docs/DEVELOPMENT.md`を参照してください。
+2026年10月8日のレビューで補足した資料は提案・確認用であり、未決の業務条件やAPI仕様を承認済みにしたものではありません。現在は資料準備までとし、実装開始は別途の依頼を受けてから行います。
 画面や機能を追加・変更した際は、動作する部分と表示のみの部分が分かるように、これらの資料も更新します。
 
 ## 管理者・管制向けの画面のモック
